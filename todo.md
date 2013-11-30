@@ -1,0 +1,15 @@
+- [x]	Create bolerplate HTML.
+- [x]	Add necessary libraries.
+- [x]	Add minimum starting markup.
+- [ ]	Build simple object framework for app functionality.
+- [ ] Define object for pages.
+- [ ] Define object for notes.
+- [ ] Reader and writer for url arguments for page and notebook keys, if necessary.
+- [ ]	Placeholder errors for missing keys.
+- [ ]	Formatter for arbitrary strings to valid keys.
+- [ ]	Preprocessor for markdown
+	- [ ]	Basic explicit non-url to okvviki url substitution.
+	- [ ]	Referential sub.
+	- [ ]	Implicit sub.
+- [ ]	Saver for page objects.
+- [ ]	Retriever for page objects.
