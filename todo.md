@@ -1,10 +1,11 @@
 - [x]	Create bolerplate HTML.
 - [x]	Add necessary libraries.
 - [x]	Add minimum starting markup.
-- [ ]	Build simple object framework for app functionality.
-- [ ] Define object for pages.
-- [ ] Define object for notes.
-- [ ] Reader and writer for url arguments for page and notebook keys, if necessary.
+- [x]	Build simple module for app.
+- [x]   Define object for pages.
+- [x]   Define object for pages.
+- [x]   Add utility functions.
+- [ ]   Query string reader for keys.
 - [ ]	Placeholder errors for missing keys.
 - [ ]	Formatter for arbitrary strings to valid keys.
 - [ ]	Preprocessor for markdown
