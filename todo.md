@@ -5,9 +5,9 @@
 - [x]   Define object for pages.
 - [x]   Define object for pages.
 - [x]   Add utility functions.
-- [ ]   Query string reader for keys.
-- [ ]	Placeholder errors for missing keys.
-- [ ]	Formatter for arbitrary strings to valid keys.
+- [x]   Query string reader for keys.
+- [x]	Formatter for arbitrary strings to valid keys.
+- [x]   Generated URL from okvviki keys.
 - [ ]	Preprocessor for markdown
 	- [ ]	Basic explicit non-url to okvviki url substitution.
 	- [ ]	Referential sub.
