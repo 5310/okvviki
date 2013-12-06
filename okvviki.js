@@ -1,6 +1,11 @@
+/**
+ * Contains all the okvviki functionality.
+ * 
+ * @namespace
+ */
 okvviki = {
     
-    /*
+    /**
      * Properties that defines the okvviki app instance.
      * 
      * @property    {String}    domain - The domain this okvviki instance operate udner and will generate URL for.
@@ -29,8 +34,7 @@ okvviki = {
     /**
      * Constructs a generic page object.
      * 
-     * @constructor
-     * @this        {Page}    The page object being created.    
+     * @constructor 
      */
     Page: function() {
         this.title = "";
@@ -39,12 +43,12 @@ okvviki = {
         this.notebookPages = [];
     },
     
-    /*
+    /**
      * Reads the okvviki keys from the currently loaded URL's query strings.
      * 
      * It parses the properties by the given names in config.
      * 
-     * @this        {Object}    The okvviki module.
+     * @this        okvviki
      * 
      * @returns     {Object}    keys - Object containing parsed keys.
      * @properties  {String}    keys.notebookKey - Notebook key of the currently loaded page.
@@ -63,10 +67,10 @@ okvviki = {
         return keys;    
     },
     
-    /*
+    /**
      * Converts any given string to a valid key for querystring property and OKV storage.
      * 
-     * @this        {Object}    The okvviki module.
+     * @this        okvviki
      * 
      * @param       {String}    string - The arbitrary string to be cleaned.
      * 
@@ -82,10 +86,10 @@ okvviki = {
         return key; 
     },
     
-    /*
+    /**
      * Creates an URL from okvviki keys.
      * 
-     * @this        {Object}    The okvviki module.
+     * @this        okvviki
      * 
      * @param       {String}    pageKey - The unique key denoting the okvviki page inside its notebook.
      * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
@@ -101,8 +105,10 @@ okvviki = {
         return url; 
     },
     
-    /*
+    /**
      * Directly modifies the page's okvviki flavored Markdown in order to fill in autokeys or other macros.
+     * 
+     * @this        okvviki
      * 
      * @param       {Page}      page - The okvviki page object whose content is to be expanded.
      * 
@@ -110,8 +116,10 @@ okvviki = {
      */
     expand: function( page ) { return page; },
     
-    /*
+    /**
      * Preprocesses a page's okvviki flavored Markdown to generate proper URLS for rendering with Markdown.
+     * 
+     * @this        okvviki
      * 
      * @param       {Page}      page - The okvviki page object whose content is to be expanded.
      * 
@@ -119,8 +127,10 @@ okvviki = {
      */
     preprocess: function( page ) { return markdown; },
     
-    /*
+    /**
      * Renders a standard Markdown string to HTML.
+     * 
+     * @this        okvviki
      * 
      * @param       {String}    markdown - The standard Markdown string to be rendered to HTML.
      * 
@@ -139,7 +149,7 @@ okvviki = {
      * @param       {String}        pageKey - Key of the page being dealt with.
     */
     
-    /*
+    /**
      * This is a debung function that just prints all the parameters given to a pageIO callback.
      * 
      * @see         okvviki.pageIOCallback
@@ -150,10 +160,10 @@ okvviki = {
         console.log( pageKey );
     },
     
-    /*
+    /**
      * Loads an okvviki page object from OKV.
      * 
-     * @this        {Object}    The okvviki module.
+     * @this        okvviki
      * 
      * @param       {pageIOCallback}    callback - The callback that receives the loaded page if any and keys. Not optional if you want to get anything done.
      * @param       {String}    pageKey - The unique key denoting the okvviki page inside its notebook.
@@ -183,10 +193,10 @@ okvviki = {
         
     },
     
-    /*
+    /**
      * Saves an okvviki page object to OKV given the keys.
      * 
-     * @this        {Object}    The okvviki module.
+     * @this        okvviki
      * 
      * @param       {?pageIOCallback}    callback - The callback that receives the page object and keys after it's saved, for what it's worth.
      * @param       {Page}      page - The okvviki page object being stored.
@@ -222,10 +232,10 @@ okvviki = {
         
     },
     
-    /*
+    /**
      * Deletes an okvviki page object from OKV given the keys.
      * 
-     * @this        {Object}    The okvviki module.
+     * @this        okvviki
      * 
      * @param       {?pageIOCallback}    callback - The callback that receives a null page object and they keys used to delete it, for what it's worth.
      * @param       {String}    pageKey - The unique key denoting the okvviki page being deleted inside its notebook.
@@ -263,12 +273,12 @@ okvviki = {
     
 };
 
-/*
+/**
  * Returns the querystring value given a parameter name.
  * 
  * @param       {String}    name - The querystring parameter being retrieved.
  * 
- * @return      {String}    The value of the retrieved querystring parameter.
+ * @returns      {String}    The value of the retrieved querystring parameter.
  */
 getParameterFromURL = function( name ) {
   name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
@@ -281,12 +291,12 @@ getParameterFromURL = function( name ) {
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
-/*
+/**
  * Clones most Javascript objects.
  * 
  * @param       {Object}    object - The object to be cloned.
  * 
- * @return      {Object}    The cloned object.
+ * @returns      {Object}    The cloned object.
  */
 clone = function( object ) {
     // Handle the 3 simple types, and null or undefined
@@ -320,7 +330,7 @@ clone = function( object ) {
     throw new Error("Unable to copy object! Its type isn't supported.");
 };
 
-/*
+/**
  * Removes a lot of diacritics from given string and replaces them with closest equivalent plain roman letters.
  * 
  * @see         Code borrowed from {@link http://stackoverflow.com/a/18123985 this} Stack Overflow answer.
