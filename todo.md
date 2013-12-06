@@ -8,8 +8,9 @@
     - [x]   Query string reader for keys.
     - [x]	Formatter for arbitrary strings to valid keys.
     - [x]   Generated URL from okvviki keys.
-    - [ ]	Saver for page objects.
-    - [ ]	Retriever for page objects.
+    - [x]	Saver for page objects.
+    - [x]	Retriever for page objects.
+    - [x]	Deleter for page objects.
     - [ ]	Preprocessor for markdown
         - [ ]	Basic explicit non-url to okvviki url substitution.
         - [ ]	Referential sub.
