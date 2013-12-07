@@ -201,9 +201,9 @@ okvviki = {
      * This callback format will be run after page object load save or delete requests.
      * 
      * @callback    pageIOCallback
-     * @param       {?Page}         page - The page object being dealth with.
      * @param       {String}        notebookKey - The notebook key of the page being dealth with.
      * @param       {String}        pageKey - Key of the page being dealt with.
+     * @param       {?Page}         page - The page object being dealth with.
     */
     
     /**
@@ -211,7 +211,7 @@ okvviki = {
      * 
      * @see         pageIOCallback
      */
-    _debugPageIOCallback: function( page, notebookKey, pageKey ) {
+    _debugPageIOCallback: function( notebookKey, pageKey, page ) {
         console.log( page );
         console.log( notebookKey );
         console.log( pageKey );
@@ -221,17 +221,23 @@ okvviki = {
      * Loads an okvviki page object from OKV.
      * 
      * @param       {pageIOCallback}    callback - The callback that receives the loaded page if any and keys. Not optional if you want to get anything done.
-     * @param       {String}    pageKey - The unique key denoting the okvviki page inside its notebook.
-     * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
+     * @param       {String|Object}     pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
+     * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
      * 
      * @throws      Throws an exception if composite key is too short.
      * @throws      Throws an exception if composite key is too long.
      */
     loadPage: function( callback, pageKey, notebookKey ) {
         
-        var notebookKey = okvviki.makeValidKey( notebookKey );
-        notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
-        var pageKey = okvviki.makeValidKey( pageKey );
+        if ( typeof pageKey != 'string' ) {
+            var notebookKey = pageKey.notebookKey;
+            var pageKey = pageKey.pageKey;
+        } else {
+            var notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+            var pageKey = pageKey;
+        }
+        notebookKey = okvviki.makeValidKey( notebookKey );
+        pageKey = okvviki.makeValidKey( pageKey );
         
         var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
@@ -242,7 +248,7 @@ okvviki = {
         
         remoteStorage.getItem( key, function( value, key ) {
             if ( callback ) {
-                callback( value, notebookKey, pageKey ); 
+                callback( notebookKey, pageKey, value ); 
             }      
         } );
         
@@ -253,8 +259,8 @@ okvviki = {
      * 
      * @param       {?pageIOCallback}    callback - The callback that receives the page object and keys after it's saved, for what it's worth.
      * @param       {Page}      page - The okvviki page object being stored.
-     * @param       {String}    pageKey - The unique key denoting the okvviki page inside its notebook.
-     * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
+     * @param       {String|Object}     pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
+     * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
      * 
      * @throws      Throws an exception if composite key is too short.
      * @throws      Throws an exception if composite key is too long.
@@ -262,9 +268,15 @@ okvviki = {
      */
     savePage: function( callback, page, pageKey, notebookKey ) {
         
-        var notebookKey = okvviki.makeValidKey( notebookKey );
-        notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
-        var pageKey = okvviki.makeValidKey( pageKey );
+        if ( typeof pageKey != 'string' ) {
+            var notebookKey = pageKey.notebookKey;
+            var pageKey = pageKey.pageKey;
+        } else {
+            var notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+            var pageKey = pageKey;
+        }
+        notebookKey = okvviki.makeValidKey( notebookKey );
+        pageKey = okvviki.makeValidKey( pageKey );
         
         var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
@@ -278,7 +290,7 @@ okvviki = {
                 throw "Failure to save the page object to OKV. UNACCEPTABLE!!"
             } else {
                 if ( callback ) {
-                    callback( page, notebookKey, pageKey ); 
+                    callback( notebookKey, pageKey, page ); 
                 }
             }            
         } );
@@ -289,8 +301,8 @@ okvviki = {
      * Deletes an okvviki page object from OKV given the keys.
      * 
      * @param       {?pageIOCallback}    callback - The callback that receives a null page object and they keys used to delete it, for what it's worth.
-     * @param       {String}    pageKey - The unique key denoting the okvviki page being deleted inside its notebook.
-     * @param       {String}    [notebookKey] - The unique key denoting the notebook this page being deleted belongs to. Defaults to the currently loaded notebook.
+     * @param       {String|Object}     pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
+     * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
      * 
      * @throws      Throws an exception if composite key is too short.
      * @throws      Throws an exception if composite key is too long.
@@ -298,9 +310,15 @@ okvviki = {
      */
     deletePage: function( callback, pageKey, notebookKey ) { 
         
-        var notebookKey = okvviki.makeValidKey( notebookKey );
-        notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
-        var pageKey = okvviki.makeValidKey( pageKey );
+        if ( typeof pageKey != 'string' ) {
+            var notebookKey = pageKey.notebookKey;
+            var pageKey = pageKey.pageKey;
+        } else {
+            var notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+            var pageKey = pageKey;
+        }
+        notebookKey = okvviki.makeValidKey( notebookKey );
+        pageKey = okvviki.makeValidKey( pageKey );
         
         var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
@@ -315,7 +333,7 @@ okvviki = {
                 throw "Failure to delete the page object from OKV. UNACCEPTABLE!!"
             } else {
                 if ( callback ) {
-                    callback( null, notebookKey, pageKey ); 
+                    callback( notebookKey, pageKey, null ); 
                 }
             }            
         } );
