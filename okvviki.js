@@ -44,13 +44,21 @@ okvviki = {
     },
     
     /**
+     * The okvviki key object.
+     * 
+     * A simple Javascript object containing the page and notebook keys needed for many functionality.
+     * 
+     * @typedef     {Object}    Keys
+     * @property    {String}    pageKey - The unique page key.
+     * @property    {String}    notebookKey - The unique notebook key of the page.
+     */ 
+    
+    /**
      * Reads the okvviki keys from the currently loaded URL's query strings.
      * 
      * It parses the properties by the given names in config.
      * 
-     * @returns     {Object}    keys - Object containing parsed keys.
-     * @properties  {String}    keys.notebookKey - Notebook key of the currently loaded page.
-     * @properties  {String}    keys.pageKey - The key of the currently loaded page.
+     * @returns     {Keys}       keys - Object containing parsed keys.
      * 
      * @throws      Throws an exception if there was no notebook key.
      */
@@ -81,9 +89,7 @@ okvviki = {
      * 
      * @param       {String}    shorthand - The shorthand being parsed.
      * 
-     * @returns     {Object}    keys - Object containing parsed keys.
-     * @properties  {String}    keys.notebookKey - Notebook key of the shorthand.
-     * @properties  {String}    keys.pageKey - The page key of the shorthand.
+     * @returns     {Keys}    keys - Object containing parsed keys.
      */
     parseKeysFromShorthand: function( shorthand ) { 
         var shorthand = shorthand.trim().toLowerCase();
@@ -130,7 +136,7 @@ okvviki = {
     /**
      * Creates an URL from okvviki keys.
      * 
-     * @param       {String|Object}    pageKey|keys - The unique key denoting the okvviki page inside its notebook. Or an object containing both keys.
+     * @param       {String|Keys}   pageKey|keys - The unique key denoting the okvviki page inside its notebook. Or an object containing both keys.
      * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
      * 
      * @returns     {String}    url - The generated okvviki URL.
@@ -221,7 +227,7 @@ okvviki = {
      * Loads an okvviki page object from OKV.
      * 
      * @param       {pageIOCallback}    callback - The callback that receives the loaded page if any and keys. Not optional if you want to get anything done.
-     * @param       {String|Object}     pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
+     * @param       {String|Keys}       pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
      * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
      * 
      * @throws      Throws an exception if composite key is too short.
@@ -259,7 +265,7 @@ okvviki = {
      * 
      * @param       {?pageIOCallback}    callback - The callback that receives the page object and keys after it's saved, for what it's worth.
      * @param       {Page}      page - The okvviki page object being stored.
-     * @param       {String|Object}     pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
+     * @param       {String|Keys}       pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
      * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
      * 
      * @throws      Throws an exception if composite key is too short.
@@ -301,7 +307,7 @@ okvviki = {
      * Deletes an okvviki page object from OKV given the keys.
      * 
      * @param       {?pageIOCallback}    callback - The callback that receives a null page object and they keys used to delete it, for what it's worth.
-     * @param       {String|Object}     pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
+     * @param       {String|Keys}       pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
      * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
      * 
      * @throws      Throws an exception if composite key is too short.
