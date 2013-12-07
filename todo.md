@@ -13,12 +13,11 @@
     - [x]	Deleter for page objects.
     - [x]   Parse shorthands into keys.
     - [ ]	Preprocessor for markdown
-        - [x]	Add Marked.
-        - [ ]	Basic explicit non-url to okvviki url substitution.
-        - [ ]	Referential sub.
-        - [ ]	Implicit sub.
+        - [x]	Process direct explicit shorthands.
+        - [ ]	Process referential shorthands.
+        - [ ]	Process direct implicit shorthands.
     - [ ]   Render markdown.
-        - [ ]   Add library.
+        - [x]	Add Marked.
         - [ ]   Test with DOM.
     - [ ]   Page editing.
         - [ ]   Basic content text editing.

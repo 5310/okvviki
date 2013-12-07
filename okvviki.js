@@ -122,11 +122,15 @@ okvviki = {
      * @throws      Throws an exception if the converted key is empty.
      */
     makeValidKey: function( string ) { 
-        var key = removeDiacritics(string.toLowerCase().trim()).replace(/[\.,!?;:'"]/gi, '').replace(/[^a-z0-9\+-~_]/gi, '_');
-        if ( key == '' ) {
-            throw "Key cannot be made valid. UNACCEPTABLE!";
+        if ( string.trim() == '' ) {
+            return '';
+        } else {
+            var key = removeDiacritics(string.toLowerCase().trim()).replace(/[\.,!?;:'"]/gi, '').replace(/[^a-z0-9\+-~_]/gi, '_');
+            if ( key == '' ) {
+                throw "Key cannot be made valid. UNACCEPTABLE!";
+            }
+            return key; 
         }
-        return key; 
     },
     
     /**
@@ -134,17 +138,23 @@ okvviki = {
      * 
      * @this        okvviki
      * 
-     * @param       {String}    pageKey - The unique key denoting the okvviki page inside its notebook.
+     * @param       {String|Object}    pageKey|keys - The unique key denoting the okvviki page inside its notebook. Or an object containing both keys.
      * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
      * 
      * @returns     {String}    url - The generated okvviki URL.
      */
     // Returns an URL string.
     generatePageURL: function( pageKey, notebookKey ) { 
-        var notebookKey = this.makeValidKey( notebookKey );
+        if ( typeof pageKey === 'string' ) {
+            var notebookKey = this.makeValidKey( notebookKey );
+            var pageKey = this.makeValidKey( pageKey );
+        } else {
+            var notebookKey = this.makeValidKey( pageKey.notebookKey );
+            var pageKey = this.makeValidKey( pageKey.pageKey );
+        }
         notebookKey = notebookKey ? notebookKey : this.parseKeysFromURL().notebookKey;
-        var pageKey = this.makeValidKey( pageKey );
-        var url = this.config.domain+'?'+this.config.notebookKeyParam+'='+notebookKey+'&'+this.config.pageKeyParam+'='+pageKey;
+        var url = this.config.domain+'?'+this.config.notebookKeyParam+'='+notebookKey;
+        url += pageKey != '' ? '&'+this.config.pageKeyParam+'='+pageKey : '';
         return url; 
     },
     
@@ -174,9 +184,15 @@ okvviki = {
      */
     preprocess: function( page ) { 
         var markdown = page.content;
-        // scan for all shorthands
-        // parse all shorthands
-        // generate url from all shorthands
+        // Preprocess direct explicit shorthands.
+        var regex = /\[[^\[\]]+\]\(([^\.\:\/\(\)\[\]]+\/?[^\.\/\(\)\[\]]*)\)/g;
+        markdown = markdown.replace( regex, function( match, group, char) {
+            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
+            match = match.replace( group, url );
+            return match;
+        } );
+        //TODO: Preprocess refeerntial shorthands.
+        //TODO: Preprocess direct implicit shorthands.
         return markdown; 
     },
     
@@ -491,6 +507,28 @@ removeDiacritics = function( str ) {
 
 }
 
+/**
+ * Returns only the matched groups given a string and a regex.
+ * 
+ * @see         Code borrowed from {@link http://stackoverflow.com/a/14210948 this} Stack Overflow answer.
+ * 
+ * @param       {String}    string - String to be regex matched.
+ * @param       {String}    regex - The regex pattern to be matched against.
+ * @param       {Number}    [index] - Index of the capturing group to be returned. Defaults to the first group.
+ * 
+ * @returns     {Array}    An array containing all matches.
+ */
+// http://stackoverflow.com/a/14210948
+getMatches = function( string, regex, index ) {
+    index || (index = 1); // default to the first capturing group
+    var matches = [];
+    var match;
+    while (match = regex.exec(string)) {
+        matches.push(match[index]);
+    }
+    return matches;
+}
+
 
 
 test = function() {
@@ -500,12 +538,18 @@ test = function() {
     testpageKey = 'testpageKey';
     
     testpage.title = "This is a test page.";
-    testpage.content = "\
-    In here, I'll try to write some Markdown.\
-    \
-    Such as this.\
-    \
-    Here's a link: [click this](testnotebook/testpage2).\
-    ";
+    /*testpage.content = "\
+        Such as this.\
+        \
+        -	Here's another: [click this](google.com/android).\
+        -	Here's one: [click this](note/page).\
+        -	Here's one: [click this](page).\
+        -	Here's one: [click this](/page).\
+        -	Here's one: [click this](note/).\
+        -	Here's one more: [click this](/okvviki)\
+    ";*/
+    testpage.content = "Here's another: [click this](google.com/android). Here's one: [click this](note/page). Here's one: [click this](page). Here's one: [click this](/page). Here's one: [click this](note/). Here's one more: [click this](/okvviki).";
+    
+    console.log(okvviki.preprocess(testpage));
     
 }
