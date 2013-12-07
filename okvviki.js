@@ -68,6 +68,49 @@ okvviki = {
     },
     
     /**
+     * Reads given okvviki Markdown shorthand link and parses out the keys.
+     * 
+     * It assumes that the string given is a valid okvviki shorthand link.
+     * 
+     * It returns both the notebook and page keys. If there is only one of each, 
+     * it will set the other to blank. And it assumes that a flat key is always the pagekey.
+     * The assumptions go like this:
+     * 
+     *  -   `a/b`:  notekey = a, pagekey = b
+     *  -   `c`:    notekey = none, pagekey = c
+     *  -   `d/`:   notekey = d, pagekey = none
+     *  -   `/e`:   notekey = none, pagekey = e
+     * 
+     * @this        okvviki
+     * 
+     * @param       {String}    shorthand - The shorthand being parsed.
+     * 
+     * @returns     {Object}    keys - Object containing parsed keys.
+     * @properties  {String}    keys.notebookKey - Notebook key of the shorthand.
+     * @properties  {String}    keys.pageKey - The page key of the shorthand.
+     */
+    parseKeysFromShorthand: function( shorthand ) { 
+        var shorthand = shorthand.trim().toLowerCase();
+        var regex = /^([^\.\:\/]*)\/?([^\.\/]*)$/g;
+        var match = regex.exec(shorthand);
+        // Remember, the first entry in the augmented array match is the concatenation of matched groups. Start from [1].
+        if ( match[0].search('/') == -1 ) {
+            // When there are no /'s and therefor only the page key present.
+            var keys = { 
+                notebookKey: '', 
+                pageKey: match[1]
+            };
+        } else {
+            // Otherwise, read both notebook and page key.
+            var keys = { 
+                notebookKey: match[1], 
+                pageKey: match[2]
+            };
+        }
+        return keys; 
+    },
+    
+    /**
      * Converts any given string to a valid key for querystring property and OKV storage.
      * 
      * @this        okvviki
@@ -114,7 +157,11 @@ okvviki = {
      * 
      * @returns     {Page}      page - The given and modified page object.
      */
-    expand: function( page ) { return page; },
+    expand: function( page ) { 
+        // scan for all valid omissions in content
+        // insert random page keys in their place
+        return page; 
+    },
     
     /**
      * Preprocesses a page's okvviki flavored Markdown to generate proper URLS for rendering with Markdown.
@@ -125,7 +172,13 @@ okvviki = {
      * 
      * @returns     {String}    page - A standard Markdown string.
      */
-    preprocess: function( page ) { return markdown; },
+    preprocess: function( page ) { 
+        var markdown = page.content;
+        // scan for all shorthands
+        // parse all shorthands
+        // generate url from all shorthands
+        return markdown; 
+    },
     
     /**
      * Renders a standard Markdown string to HTML.
@@ -152,7 +205,7 @@ okvviki = {
     /**
      * This is a debung function that just prints all the parameters given to a pageIO callback.
      * 
-     * @see         okvviki.pageIOCallback
+     * @see         pageIOCallback
      */
     _debugPageIOCallback: function( page, notebookKey, pageKey ) {
         console.log( page );
@@ -273,6 +326,8 @@ okvviki = {
     
 };
 
+
+
 /**
  * Returns the querystring value given a parameter name.
  * 
@@ -335,7 +390,7 @@ clone = function( object ) {
  * 
  * @see         Code borrowed from {@link http://stackoverflow.com/a/18123985 this} Stack Overflow answer.
  * 
- * @param       {String}    str - STring to be de-diacritized.
+ * @param       {String}    str - String to be de-diacritized.
  * 
  * @returns     {String}    A de-diacritized copy of the given string.
  */
@@ -434,4 +489,23 @@ removeDiacritics = function( str ) {
 
   return str;
 
+}
+
+
+
+test = function() {
+    
+    testpage = new okvviki.Page();
+    testnotebookKey = 'testnotebookKey';
+    testpageKey = 'testpageKey';
+    
+    testpage.title = "This is a test page.";
+    testpage.content = "\
+    In here, I'll try to write some Markdown.\
+    \
+    Such as this.\
+    \
+    Here's a link: [click this](testnotebook/testpage2).\
+    ";
+    
 }

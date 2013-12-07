@@ -11,7 +11,9 @@
     - [x]	Saver for page objects.
     - [x]	Retriever for page objects.
     - [x]	Deleter for page objects.
+    - [x]   Parse shorthands into keys.
     - [ ]	Preprocessor for markdown
+        - [x]	Add Marked.
         - [ ]	Basic explicit non-url to okvviki url substitution.
         - [ ]	Referential sub.
         - [ ]	Implicit sub.
@@ -27,6 +29,6 @@
     - [ ]   Implement interactions.
     - [ ]   Style ALL the things.
 - [ ]   Documentation
-    - [ ]   Make sure JSDoc/JSDuck works.
+    - [x]   Make sure JSDoc3 works.
     - [ ]   Update readme.
     - [ ]   Add about section to app page.
