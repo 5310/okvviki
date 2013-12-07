@@ -48,8 +48,6 @@ okvviki = {
      * 
      * It parses the properties by the given names in config.
      * 
-     * @this        okvviki
-     * 
      * @returns     {Object}    keys - Object containing parsed keys.
      * @properties  {String}    keys.notebookKey - Notebook key of the currently loaded page.
      * @properties  {String}    keys.pageKey - The key of the currently loaded page.
@@ -58,8 +56,8 @@ okvviki = {
      */
     parseKeysFromURL: function() { 
         var keys = { 
-            notebookKey: getParameterFromURL( this.config.notebookKeyParam ), 
-            pageKey: getParameterFromURL( this.config.pageKeyParam )
+            notebookKey: getParameterFromURL( okvviki.config.notebookKeyParam ), 
+            pageKey: getParameterFromURL( okvviki.config.pageKeyParam )
         };
         if ( keys.notebookKey == '' ) {
             throw "No notebook key found. UNACCEPTABLE!"
@@ -80,8 +78,6 @@ okvviki = {
      *  -   `c`:    notekey = none, pagekey = c
      *  -   `d/`:   notekey = d, pagekey = none
      *  -   `/e`:   notekey = none, pagekey = e
-     * 
-     * @this        okvviki
      * 
      * @param       {String}    shorthand - The shorthand being parsed.
      * 
@@ -113,8 +109,6 @@ okvviki = {
     /**
      * Converts any given string to a valid key for querystring property and OKV storage.
      * 
-     * @this        okvviki
-     * 
      * @param       {String}    string - The arbitrary string to be cleaned.
      * 
      * @returns     {String}    key - The cleaned key.
@@ -136,8 +130,6 @@ okvviki = {
     /**
      * Creates an URL from okvviki keys.
      * 
-     * @this        okvviki
-     * 
      * @param       {String|Object}    pageKey|keys - The unique key denoting the okvviki page inside its notebook. Or an object containing both keys.
      * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
      * 
@@ -146,22 +138,20 @@ okvviki = {
     // Returns an URL string.
     generatePageURL: function( pageKey, notebookKey ) { 
         if ( typeof pageKey === 'string' ) {
-            var notebookKey = this.makeValidKey( notebookKey );
-            var pageKey = this.makeValidKey( pageKey );
+            var notebookKey = okvviki.makeValidKey( notebookKey );
+            var pageKey = okvviki.makeValidKey( pageKey );
         } else {
-            var notebookKey = this.makeValidKey( pageKey.notebookKey );
-            var pageKey = this.makeValidKey( pageKey.pageKey );
+            var notebookKey = okvviki.makeValidKey( pageKey.notebookKey );
+            var pageKey = okvviki.makeValidKey( pageKey.pageKey );
         }
-        notebookKey = notebookKey ? notebookKey : this.parseKeysFromURL().notebookKey;
-        var url = this.config.domain+'?'+this.config.notebookKeyParam+'='+notebookKey;
-        url += pageKey != '' ? '&'+this.config.pageKeyParam+'='+pageKey : '';
+        notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+        var url = okvviki.config.domain+'?'+okvviki.config.notebookKeyParam+'='+notebookKey;
+        url += pageKey != '' ? '&'+okvviki.config.pageKeyParam+'='+pageKey : '';
         return url; 
     },
     
     /**
      * Directly modifies the page's okvviki flavored Markdown in order to fill in autokeys or other macros.
-     * 
-     * @this        okvviki
      * 
      * @param       {Page}      page - The okvviki page object whose content is to be expanded.
      * 
@@ -199,8 +189,6 @@ okvviki = {
     /**
      * Renders a standard Markdown string to HTML.
      * 
-     * @this        okvviki
-     * 
      * @param       {String}    markdown - The standard Markdown string to be rendered to HTML.
      * 
      * @returns     {String}    html - The rendered HTML string.
@@ -232,8 +220,6 @@ okvviki = {
     /**
      * Loads an okvviki page object from OKV.
      * 
-     * @this        okvviki
-     * 
      * @param       {pageIOCallback}    callback - The callback that receives the loaded page if any and keys. Not optional if you want to get anything done.
      * @param       {String}    pageKey - The unique key denoting the okvviki page inside its notebook.
      * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
@@ -243,11 +229,11 @@ okvviki = {
      */
     loadPage: function( callback, pageKey, notebookKey ) {
         
-        var notebookKey = this.makeValidKey( notebookKey );
-        notebookKey = notebookKey ? notebookKey : this.parseKeysFromURL().notebookKey;
-        var pageKey = this.makeValidKey( pageKey );
+        var notebookKey = okvviki.makeValidKey( notebookKey );
+        notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+        var pageKey = okvviki.makeValidKey( pageKey );
         
-        var key = this.config.okvPrefix+notebookKey+pageKey;
+        var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
             throw "Key is too short. UNACCEPTABLE!!";
         } else if ( key.length > 128 ) {
@@ -265,8 +251,6 @@ okvviki = {
     /**
      * Saves an okvviki page object to OKV given the keys.
      * 
-     * @this        okvviki
-     * 
      * @param       {?pageIOCallback}    callback - The callback that receives the page object and keys after it's saved, for what it's worth.
      * @param       {Page}      page - The okvviki page object being stored.
      * @param       {String}    pageKey - The unique key denoting the okvviki page inside its notebook.
@@ -278,11 +262,11 @@ okvviki = {
      */
     savePage: function( callback, page, pageKey, notebookKey ) {
         
-        var notebookKey = this.makeValidKey( notebookKey );
-        notebookKey = notebookKey ? notebookKey : this.parseKeysFromURL().notebookKey;
-        var pageKey = this.makeValidKey( pageKey );
+        var notebookKey = okvviki.makeValidKey( notebookKey );
+        notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+        var pageKey = okvviki.makeValidKey( pageKey );
         
-        var key = this.config.okvPrefix+notebookKey+pageKey;
+        var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
             throw "Key is too short. UNACCEPTABLE!!";
         } else if ( key.length > 128 ) {
@@ -304,8 +288,6 @@ okvviki = {
     /**
      * Deletes an okvviki page object from OKV given the keys.
      * 
-     * @this        okvviki
-     * 
      * @param       {?pageIOCallback}    callback - The callback that receives a null page object and they keys used to delete it, for what it's worth.
      * @param       {String}    pageKey - The unique key denoting the okvviki page being deleted inside its notebook.
      * @param       {String}    [notebookKey] - The unique key denoting the notebook this page being deleted belongs to. Defaults to the currently loaded notebook.
@@ -316,11 +298,11 @@ okvviki = {
      */
     deletePage: function( callback, pageKey, notebookKey ) { 
         
-        var notebookKey = this.makeValidKey( notebookKey );
-        notebookKey = notebookKey ? notebookKey : this.parseKeysFromURL().notebookKey;
-        var pageKey = this.makeValidKey( pageKey );
+        var notebookKey = okvviki.makeValidKey( notebookKey );
+        notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+        var pageKey = okvviki.makeValidKey( pageKey );
         
-        var key = this.config.okvPrefix+notebookKey+pageKey;
+        var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
             throw "Key is too short. UNACCEPTABLE!!";
         } else if ( key.length > 128 ) {
