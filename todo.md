@@ -16,6 +16,7 @@
         - [x]	Process direct explicit shorthands.
         - [ ]	Process referential shorthands.
         - [ ]	Process direct implicit shorthands.
+        - [ ]   Accomodate titles!
     - [ ]   Render markdown.
         - [x]	Add Marked.
         - [ ]   Test with DOM.

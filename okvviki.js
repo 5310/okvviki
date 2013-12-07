@@ -181,7 +181,7 @@ okvviki = {
     preprocess: function( page ) { 
         var markdown = page.content;
         // Preprocess direct explicit shorthands.
-        var regex = /\[[^\[\]]+\]\(([^\.\:\/\(\)\[\]]+\/?[^\.\/\(\)\[\]]*)\)/g;
+        var regex = /\[[^\[\]]+\]\(([^\.\:\/\(\)\[\]\s"]+\/?[^\.\/\(\)\[\]\s"]*)\s*("[^"]*")?\)/g;
         markdown = markdown.replace( regex, function( match, group, char) {
             var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
             match = match.replace( group, url );
@@ -554,7 +554,7 @@ test = function() {
         -	Here's one: [click this](note/).\
         -	Here's one more: [click this](/okvviki)\
     ";*/
-    testpage.content = "Here's another: [click this](google.com/android). Here's one: [click this](note/page). Here's one: [click this](page). Here's one: [click this](/page). Here's one: [click this](note/). Here's one more: [click this](/okvviki).";
+    testpage.content = "Here's another: [click this](google.com/android). Here's one: [click this](note/page). Here's one: [click this](page \"aaa\"). Here's one: [click this](/page). Here's one: [click this](note/). Here's one more: [click this](/okvviki). ";
     
     console.log(okvviki.preprocess(testpage));
     
