@@ -519,7 +519,7 @@ removeDiacritics = function( str ) {
  * @see         Code borrowed from {@link http://stackoverflow.com/a/14210948 this} Stack Overflow answer.
  * 
  * @param       {String}    string - String to be regex matched.
- * @param       {String}    regex - The regex pattern to be matched against.
+ * @param       {String|RegExp} regex - The regex pattern to be matched against.
  * @param       {Number}    [index] - Index of the capturing group to be returned. Defaults to the first group.
  * 
  * @returns     {Array}    An array containing all matches.
