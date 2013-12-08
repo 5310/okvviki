@@ -187,6 +187,13 @@ okvviki = {
             match = match.replace( group, url );
             return match;
         } );
+        // Preprocess direct implicit shorthands.
+        var regex = /\[([^\.\:\/\(\)\[\]]+\/?[^\.\/\(\)\[\]]*)\]\(\)/g;
+        markdown = markdown.replace( regex, function( match, group, char) {
+            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
+            match = match.replace( group, url );
+            return match;
+        } );
         // Preprocess refeerntial shorthands.
         var regex = /^\[[^\[\]]+\]:\s*([^\.\:\/\(\)\[\]\s"'\(\)]+\/?[^\.\/\(\)\[\]\s"'\(\)]*)?\s*(["'\(].*["'\)])?$/gm;
         markdown = markdown.replace( regex, function( match, group, char) {
@@ -194,7 +201,6 @@ okvviki = {
             match = match.replace( group, url );
             return match;
         } );
-        //TODO: Preprocess direct implicit shorthands.
         return markdown;
     },
 
@@ -551,14 +557,13 @@ test = function() {
 
     testpage.title = "This is a test page.";
     testpage.content = "\
-        Such as this.\
-        \
-        -    Here's another: [click this](google.com/android).\
-        -    Here's one: [click this](note/page).\
-        -    Here's one: [click this](page).\
-        -    Here's one: [click this](/page).\
-        -    Here's one: [click this](note/).\
-        -    Here's one more: [click this](/okvviki)\
+        -   Here's another: [click this](google.com/android).\
+        -   Here's one: [click this](note/page).\
+        -   Here's one: [click this](page).\
+        -   Here's one: [click this](/page).\
+        -   Here's one: [click this](note/).\
+        -   Here's one more: [click this](/okvviki)\
+        -   [google.com]() [note/page]() [page]() [/page]() [note/]() [some text]()\
     ";
     console.log(okvviki.preprocess(testpage));
 
@@ -571,5 +576,6 @@ test = function() {
     console.log(okvviki.preprocess({content: "[foo]: page 'title'"}));
     console.log(okvviki.preprocess({content: "[foo]: /page"}));
     console.log(okvviki.preprocess({content: "[foo]: note/"}));
+
 
 }

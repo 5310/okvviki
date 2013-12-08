@@ -15,7 +15,7 @@
     - [ ]   Preprocessor for markdown
         - [x]   Process direct explicit shorthands.
         - [x]   Process referential shorthands.
-        - [ ]   Process direct implicit shorthands.
+        - [x]   Process direct implicit shorthands.
         - [x]   Accomodate titles!
         - [ ]   Make substitutions work on index and not string replace which may break!
     - [ ]   Render markdown.
