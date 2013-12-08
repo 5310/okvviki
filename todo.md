@@ -1,25 +1,26 @@
-- [x]	Create bolerplate HTML.
-- [x]	Add necessary libraries.
-- [x]	Add minimum starting markup.
+- [x]   Create bolerplate HTML.
+- [x]   Add necessary libraries.
+- [x]   Add minimum starting markup.
 - [ ]   Internals
-    - [x]	Build simple module for app.
+    - [x]   Build simple module for app.
     - [x]   Define object for pages.
     - [x]   Add utility functions.
     - [x]   Query string reader for keys.
-    - [x]	Formatter for arbitrary strings to valid keys.
+    - [x]   Formatter for arbitrary strings to valid keys.
     - [x]   Generated URL from okvviki keys.
-    - [x]	Saver for page objects.
-    - [x]	Retriever for page objects.
-    - [x]	Deleter for page objects.
+    - [x]   Saver for page objects.
+    - [x]   Retriever for page objects.
+    - [x]   Deleter for page objects.
     - [x]   Parse shorthands into keys.
-    - [ ]	Preprocessor for markdown
-        - [x]	Process direct explicit shorthands.
-        - [ ]	Process referential shorthands.
-        - [ ]	Process direct implicit shorthands.
-        - [ ]   Accomodate titles!
+    - [ ]   Preprocessor for markdown
+        - [x]   Process direct explicit shorthands.
+        - [x]   Process referential shorthands.
+        - [ ]   Process direct implicit shorthands.
+        - [x]   Accomodate titles!
+        - [ ]   Make substitutions work on index and not string replace which may break!
     - [ ]   Render markdown.
-        - [x]	Add Marked.
-        - [ ]   Test with DOM.
+        - [x]    Add Marked.
+        - [ ]    Test with DOM.
     - [ ]   Page editing.
         - [ ]   Basic content text editing.
         - [ ]   Toolbar tools.

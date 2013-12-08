@@ -1,13 +1,13 @@
 /**
  * Contains all the okvviki functionality.
- * 
+ *
  * @namespace
  */
 okvviki = {
-    
+
     /**
      * Properties that defines the okvviki app instance.
-     * 
+     *
      * @property    {String}    domain - The domain this okvviki instance operate udner and will generate URL for.
      * @property    {String}    notebookKeyParam - The parameter name denoting notebook keys in this okvviki instance.
      * @property    {String}    pageKeyParam - The parameter name denoting page keys in this okvviki instance.
@@ -18,23 +18,23 @@ okvviki = {
         notebookKeyParam: 'n',
         pageKeyParam: 'p',
     },
-    
+
     /**
      * The okvviki page object.
-     * 
+     *
      * Page objects are used to store okvviki pages as well as the special-case page known as the notebook which contains other pages.
      * These are simple Javascript objects which will be stored directly to OKV. Naturally, they contain just data and no additional methods.
-     * 
+     *
      * @typedef     {Object}    Page
      * @property    {String}    title - An optional title for the okvviki page.
      * @property    {String}    content - The okvviki flavored Markdown string content of the page.
-     * @property    {Boolean}   isNotebook - Whether or 
+     * @property    {Boolean}   isNotebook - Whether or
      * @property    {Array}     notebookPages - List of pages contained in this notebook page object.
-     */ 
+     */
     /**
      * Constructs a generic page object.
-     * 
-     * @constructor 
+     *
+     * @constructor
      */
     Page: function() {
         this.title = "";
@@ -42,86 +42,86 @@ okvviki = {
         this.isNotebook = false;
         this.notebookPages = [];
     },
-    
+
     /**
      * The okvviki key object.
-     * 
+     *
      * A simple Javascript object containing the page and notebook keys needed for many functionality.
-     * 
+     *
      * @typedef     {Object}    Keys
      * @property    {String}    pageKey - The unique page key.
      * @property    {String}    notebookKey - The unique notebook key of the page.
-     */ 
-    
+     */
+
     /**
      * Reads the okvviki keys from the currently loaded URL's query strings.
-     * 
+     *
      * It parses the properties by the given names in config.
-     * 
+     *
      * @returns     {Keys}       keys - Object containing parsed keys.
-     * 
+     *
      * @throws      Throws an exception if there was no notebook key.
      */
-    parseKeysFromURL: function() { 
-        var keys = { 
-            notebookKey: getParameterFromURL( okvviki.config.notebookKeyParam ), 
+    parseKeysFromURL: function() {
+        var keys = {
+            notebookKey: getParameterFromURL( okvviki.config.notebookKeyParam ),
             pageKey: getParameterFromURL( okvviki.config.pageKeyParam )
         };
         if ( keys.notebookKey == '' ) {
             throw "No notebook key found. UNACCEPTABLE!"
         }
-        return keys;    
+        return keys;
     },
-    
+
     /**
      * Reads given okvviki Markdown shorthand link and parses out the keys.
-     * 
+     *
      * It assumes that the string given is a valid okvviki shorthand link.
-     * 
-     * It returns both the notebook and page keys. If there is only one of each, 
+     *
+     * It returns both the notebook and page keys. If there is only one of each,
      * it will set the other to blank. And it assumes that a flat key is always the pagekey.
      * The assumptions go like this:
-     * 
+     *
      *  -   `a/b`:  notekey = a, pagekey = b
      *  -   `c`:    notekey = none, pagekey = c
      *  -   `d/`:   notekey = d, pagekey = none
      *  -   `/e`:   notekey = none, pagekey = e
-     * 
+     *
      * @param       {String}    shorthand - The shorthand being parsed.
-     * 
+     *
      * @returns     {Keys}    keys - Object containing parsed keys.
      */
-    parseKeysFromShorthand: function( shorthand ) { 
+    parseKeysFromShorthand: function( shorthand ) {
         var shorthand = shorthand.trim().toLowerCase();
         var regex = /^([^\.\:\/]*)\/?([^\.\/]*)$/g;
         var match = regex.exec(shorthand);
         // Remember, the first entry in the augmented array match is the concatenation of matched groups. Start from [1].
         if ( match[0].search('/') == -1 ) {
             // When there are no /'s and therefor only the page key present.
-            var keys = { 
-                notebookKey: '', 
+            var keys = {
+                notebookKey: '',
                 pageKey: match[1]
             };
         } else {
             // Otherwise, read both notebook and page key.
-            var keys = { 
-                notebookKey: match[1], 
+            var keys = {
+                notebookKey: match[1],
                 pageKey: match[2]
             };
         }
-        return keys; 
+        return keys;
     },
-    
+
     /**
      * Converts any given string to a valid key for querystring property and OKV storage.
-     * 
+     *
      * @param       {String}    string - The arbitrary string to be cleaned.
-     * 
+     *
      * @returns     {String}    key - The cleaned key.
-     * 
+     *
      * @throws      Throws an exception if the converted key is empty.
      */
-    makeValidKey: function( string ) { 
+    makeValidKey: function( string ) {
         if ( string.trim() == '' ) {
             return '';
         } else {
@@ -129,20 +129,20 @@ okvviki = {
             if ( key == '' ) {
                 throw "Key cannot be made valid. UNACCEPTABLE!";
             }
-            return key; 
+            return key;
         }
     },
-    
+
     /**
      * Creates an URL from okvviki keys.
-     * 
+     *
      * @param       {String|Keys}   pageKey|keys - The unique key denoting the okvviki page inside its notebook. Or an object containing both keys.
      * @param       {String}    [notebookKey] - The unique key denoting the notebook this page belongs to. Defaults to the currently loaded notebook.
-     * 
+     *
      * @returns     {String}    url - The generated okvviki URL.
      */
     // Returns an URL string.
-    generatePageURL: function( pageKey, notebookKey ) { 
+    generatePageURL: function( pageKey, notebookKey ) {
         if ( typeof pageKey === 'string' ) {
             var notebookKey = okvviki.makeValidKey( notebookKey );
             var pageKey = okvviki.makeValidKey( pageKey );
@@ -153,32 +153,32 @@ okvviki = {
         notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
         var url = okvviki.config.domain+'?'+okvviki.config.notebookKeyParam+'='+notebookKey;
         url += pageKey != '' ? '&'+okvviki.config.pageKeyParam+'='+pageKey : '';
-        return url; 
+        return url;
     },
-    
+
     /**
      * Directly modifies the page's okvviki flavored Markdown in order to fill in autokeys or other macros.
-     * 
+     *
      * @param       {Page}      page - The okvviki page object whose content is to be expanded.
-     * 
+     *
      * @returns     {Page}      page - The given and modified page object.
      */
-    expand: function( page ) { 
+    expand: function( page ) {
         // scan for all valid omissions in content
         // insert random page keys in their place
-        return page; 
+        return page;
     },
-    
+
     /**
      * Preprocesses a page's okvviki flavored Markdown to generate proper URLS for rendering with Markdown.
-     * 
+     *
      * @this        okvviki
-     * 
+     *
      * @param       {Page}      page - The okvviki page object whose content is to be expanded.
-     * 
+     *
      * @returns     {String}    page - A standard Markdown string.
      */
-    preprocess: function( page ) { 
+    preprocess: function( page ) {
         var markdown = page.content;
         // Preprocess direct explicit shorthands.
         var regex = /\[[^\[\]]+\]\(([^\.\:\/\(\)\[\]\s"]+\/?[^\.\/\(\)\[\]\s"]*)\s*("[^"]*")?\)/g;
@@ -187,34 +187,40 @@ okvviki = {
             match = match.replace( group, url );
             return match;
         } );
-        //TODO: Preprocess refeerntial shorthands.
+        // Preprocess refeerntial shorthands.
+        var regex = /^\[[^\[\]]+\]:\s*([^\.\:\/\(\)\[\]\s"'\(\)]+\/?[^\.\/\(\)\[\]\s"'\(\)]*)?\s*(["'\(].*["'\)])?$/gm;
+        markdown = markdown.replace( regex, function( match, group, char) {
+            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
+            match = match.replace( group, url );
+            return match;
+        } );
         //TODO: Preprocess direct implicit shorthands.
-        return markdown; 
+        return markdown;
     },
-    
+
     /**
      * Renders a standard Markdown string to HTML.
-     * 
+     *
      * @param       {String}    markdown - The standard Markdown string to be rendered to HTML.
-     * 
+     *
      * @returns     {String}    html - The rendered HTML string.
-     * 
+     *
      * @throws      Throws an exception if rendering failed.
      */
     render: function( markdown ) { return html; },
-    
+
     /**
      * This callback format will be run after page object load save or delete requests.
-     * 
+     *
      * @callback    pageIOCallback
      * @param       {String}        notebookKey - The notebook key of the page being dealth with.
      * @param       {String}        pageKey - Key of the page being dealt with.
      * @param       {?Page}         page - The page object being dealth with.
     */
-    
+
     /**
      * This is a debung function that just prints all the parameters given to a pageIO callback.
-     * 
+     *
      * @see         pageIOCallback
      */
     _debugPageIOCallback: function( notebookKey, pageKey, page ) {
@@ -222,19 +228,19 @@ okvviki = {
         console.log( notebookKey );
         console.log( pageKey );
     },
-    
+
     /**
      * Loads an okvviki page object from OKV.
-     * 
+     *
      * @param       {pageIOCallback}    callback - The callback that receives the loaded page if any and keys. Not optional if you want to get anything done.
      * @param       {String|Keys}       pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
      * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
-     * 
+     *
      * @throws      Throws an exception if composite key is too short.
      * @throws      Throws an exception if composite key is too long.
      */
     loadPage: function( callback, pageKey, notebookKey ) {
-        
+
         if ( typeof pageKey != 'string' ) {
             var notebookKey = pageKey.notebookKey;
             var pageKey = pageKey.pageKey;
@@ -244,36 +250,36 @@ okvviki = {
         }
         notebookKey = okvviki.makeValidKey( notebookKey );
         pageKey = okvviki.makeValidKey( pageKey );
-        
+
         var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
             throw "Key is too short. UNACCEPTABLE!!";
         } else if ( key.length > 128 ) {
             throw "Key is too long. UNACCEPTABLE!!";
-        } 
-        
+        }
+
         remoteStorage.getItem( key, function( value, key ) {
             if ( callback ) {
-                callback( notebookKey, pageKey, value ); 
-            }      
+                callback( notebookKey, pageKey, value );
+            }
         } );
-        
+
     },
-    
+
     /**
      * Saves an okvviki page object to OKV given the keys.
-     * 
+     *
      * @param       {?pageIOCallback}    callback - The callback that receives the page object and keys after it's saved, for what it's worth.
      * @param       {Page}      page - The okvviki page object being stored.
      * @param       {String|Keys}       pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
      * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
-     * 
+     *
      * @throws      Throws an exception if composite key is too short.
      * @throws      Throws an exception if composite key is too long.
      * @throws      Throws an exception if OKV failed to store the page object.
      */
     savePage: function( callback, page, pageKey, notebookKey ) {
-        
+
         if ( typeof pageKey != 'string' ) {
             var notebookKey = pageKey.notebookKey;
             var pageKey = pageKey.pageKey;
@@ -283,39 +289,39 @@ okvviki = {
         }
         notebookKey = okvviki.makeValidKey( notebookKey );
         pageKey = okvviki.makeValidKey( pageKey );
-        
+
         var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
             throw "Key is too short. UNACCEPTABLE!!";
         } else if ( key.length > 128 ) {
             throw "Key is too long. UNACCEPTABLE!!";
-        } 
-        
+        }
+
         remoteStorage.setItem( key, page, function( response ) {
             if ( response.status != 'multiset' ) {
                 throw "Failure to save the page object to OKV. UNACCEPTABLE!!"
             } else {
                 if ( callback ) {
-                    callback( notebookKey, pageKey, page ); 
+                    callback( notebookKey, pageKey, page );
                 }
-            }            
+            }
         } );
-        
+
     },
-    
+
     /**
      * Deletes an okvviki page object from OKV given the keys.
-     * 
+     *
      * @param       {?pageIOCallback}    callback - The callback that receives a null page object and they keys used to delete it, for what it's worth.
      * @param       {String|Keys}       pageKey|keys - The unique key denoting the okvviki page inside its notebook. OR An okvviki keys object containing both keys.
      * @param       {String}    [notebookKey] - The unique key for the notebook of page. Defaults to the currently loaded notebook. Only used if key pagekey is a string.
-     * 
+     *
      * @throws      Throws an exception if composite key is too short.
      * @throws      Throws an exception if composite key is too long.
      * @throws      Throws an exception if OKV failed to delete the page object.
      */
-    deletePage: function( callback, pageKey, notebookKey ) { 
-        
+    deletePage: function( callback, pageKey, notebookKey ) {
+
         if ( typeof pageKey != 'string' ) {
             var notebookKey = pageKey.notebookKey;
             var pageKey = pageKey.pageKey;
@@ -325,36 +331,36 @@ okvviki = {
         }
         notebookKey = okvviki.makeValidKey( notebookKey );
         pageKey = okvviki.makeValidKey( pageKey );
-        
+
         var key = okvviki.config.okvPrefix+notebookKey+pageKey;
         if ( key.length <= 0 ) {
             throw "Key is too short. UNACCEPTABLE!!";
         } else if ( key.length > 128 ) {
             throw "Key is too long. UNACCEPTABLE!!";
-        } 
-        
+        }
+
         remoteStorage.deleteItem( key, function( response ) {
             console.log(response);
             if ( response.status != 'multiset' ) {
                 throw "Failure to delete the page object from OKV. UNACCEPTABLE!!"
             } else {
                 if ( callback ) {
-                    callback( notebookKey, pageKey, null ); 
+                    callback( notebookKey, pageKey, null );
                 }
-            }            
+            }
         } );
-    
+
     },
-    
+
 };
 
 
 
 /**
  * Returns the querystring value given a parameter name.
- * 
+ *
  * @param       {String}    name - The querystring parameter being retrieved.
- * 
+ *
  * @returns      {String}    The value of the retrieved querystring parameter.
  */
 getParameterFromURL = function( name ) {
@@ -370,9 +376,9 @@ getParameterFromURL = function( name ) {
 
 /**
  * Clones most Javascript objects.
- * 
+ *
  * @param       {Object}    object - The object to be cloned.
- * 
+ *
  * @returns      {Object}    The cloned object.
  */
 clone = function( object ) {
@@ -409,11 +415,11 @@ clone = function( object ) {
 
 /**
  * Removes a lot of diacritics from given string and replaces them with closest equivalent plain roman letters.
- * 
+ *
  * @see         Code borrowed from {@link http://stackoverflow.com/a/18123985 this} Stack Overflow answer.
- * 
+ *
  * @param       {String}    str - String to be de-diacritized.
- * 
+ *
  * @returns     {String}    A de-diacritized copy of the given string.
  */
 removeDiacritics = function( str ) {
@@ -515,13 +521,13 @@ removeDiacritics = function( str ) {
 
 /**
  * Returns only the matched groups given a string and a regex.
- * 
+ *
  * @see         Code borrowed from {@link http://stackoverflow.com/a/14210948 this} Stack Overflow answer.
- * 
+ *
  * @param       {String}    string - String to be regex matched.
  * @param       {String|RegExp} regex - The regex pattern to be matched against.
  * @param       {Number}    [index] - Index of the capturing group to be returned. Defaults to the first group.
- * 
+ *
  * @returns     {Array}    An array containing all matches.
  */
 // http://stackoverflow.com/a/14210948
@@ -538,24 +544,32 @@ getMatches = function( string, regex, index ) {
 
 
 test = function() {
-    
+
     testpage = new okvviki.Page();
     testnotebookKey = 'testnotebookKey';
     testpageKey = 'testpageKey';
-    
+
     testpage.title = "This is a test page.";
-    /*testpage.content = "\
+    testpage.content = "\
         Such as this.\
         \
-        -	Here's another: [click this](google.com/android).\
-        -	Here's one: [click this](note/page).\
-        -	Here's one: [click this](page).\
-        -	Here's one: [click this](/page).\
-        -	Here's one: [click this](note/).\
-        -	Here's one more: [click this](/okvviki)\
-    ";*/
-    testpage.content = "Here's another: [click this](google.com/android). Here's one: [click this](note/page). Here's one: [click this](page \"aaa\"). Here's one: [click this](/page). Here's one: [click this](note/). Here's one more: [click this](/okvviki). ";
-    
+        -    Here's another: [click this](google.com/android).\
+        -    Here's one: [click this](note/page).\
+        -    Here's one: [click this](page).\
+        -    Here's one: [click this](/page).\
+        -    Here's one: [click this](note/).\
+        -    Here's one more: [click this](/okvviki)\
+    ";
     console.log(okvviki.preprocess(testpage));
-    
+
+
+    // Md referenes won't work without linebreaks, and Js strings cannot be line-broken, so the following examples are standalone.
+    console.log(okvviki.preprocess({content: "[foo]:   note/page 'note/page'"}));
+    console.log(okvviki.preprocess({content: "[foo]:   note/page"}));
+    console.log(okvviki.preprocess({content: "[foo]: http://example.com/google.com/android 'ahem'"}));
+    console.log(okvviki.preprocess({content: "[foo]: page"}));
+    console.log(okvviki.preprocess({content: "[foo]: page 'title'"}));
+    console.log(okvviki.preprocess({content: "[foo]: /page"}));
+    console.log(okvviki.preprocess({content: "[foo]: note/"}));
+
 }
