@@ -12,6 +12,11 @@
     - [x]   Retriever for page objects.
     - [x]   Deleter for page objects.
     - [x]   Parse shorthands into keys.
+    - [ ]   Expand random shorthands.
+        - [x]   Direct explicit.
+        - [x]   Direct implicit.
+        - [x]   Referential.
+        - [ ]   Make substitutions work on index and not string replace which may break!
     - [ ]   Preprocessor for markdown
         - [x]   Process direct explicit shorthands.
         - [x]   Process referential shorthands.

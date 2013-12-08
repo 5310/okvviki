@@ -134,6 +134,26 @@ okvviki = {
     },
 
     /**
+     * Converts any given string to a valid key for querystring property and OKV storage.
+     *
+     * @param       {Number}    [n] - Length of the key to generate. Defaults to 8.
+     *
+     * @returns     {String}    key - The generated random key.
+     */
+    generateRandomKey: function( n ) {
+        var n = n ? Math.round(Math.abs(n)) : 8;
+        var key = '';
+        for ( var i = 0; i < n; i++ ) {
+            key += "x";
+        }
+        key = key.replace(/[x]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+        return key;
+    },
+
+    /**
      * Creates an URL from okvviki keys.
      *
      * @param       {String|Keys}   pageKey|keys - The unique key denoting the okvviki page inside its notebook. Or an object containing both keys.
@@ -164,8 +184,29 @@ okvviki = {
      * @returns     {Page}      page - The given and modified page object.
      */
     expand: function( page ) {
-        // scan for all valid omissions in content
-        // insert random page keys in their place
+        var content = page.content;
+        // Expand direct explicit random shorthands.
+        var regex = /\[[^\[\]]+\]\((\?)\s*("[^"]*")?\)/g;
+        content = content.replace( regex, function( match, group, char) {
+            var key = okvviki.generateRandomKey();
+            match = match.replace( group, key );
+            return match;
+        } );
+        // Preprocess direct implicit random shorthands.
+        var regex = /\[(\?)\]\(\)/g;
+        content = content.replace( regex, function( match, group, char) {
+            var key = okvviki.generateRandomKey();
+            match = match.replace( group, key );
+            return match;
+        } );
+        // Preprocess refeerntial shorthands.
+        var regex = /^\[[^\[\]]+\]:\s*(\?*)?\s*(["'\(].*["'\)])?$/gm;
+        content = content.replace( regex, function( match, group, char) {
+            var key = okvviki.generateRandomKey();
+            match = match.replace( group, key );
+            return match;
+        } );
+        page.content = content;
         return page;
     },
 
@@ -563,19 +604,22 @@ test = function() {
         -   Here's one: [click this](/page).\
         -   Here's one: [click this](note/).\
         -   Here's one more: [click this](/okvviki)\
+        -   Here're some random ones: [a](?) [b](? \"title\")\
         -   [google.com]() [note/page]() [page]() [/page]() [note/]() [some text]()\
     ";
-    console.log(okvviki.preprocess(testpage));
+    console.log(okvviki.preprocess(okvviki.expand(testpage)));
 
 
     // Md referenes won't work without linebreaks, and Js strings cannot be line-broken, so the following examples are standalone.
-    console.log(okvviki.preprocess({content: "[foo]:   note/page 'note/page'"}));
-    console.log(okvviki.preprocess({content: "[foo]:   note/page"}));
-    console.log(okvviki.preprocess({content: "[foo]: http://example.com/google.com/android 'ahem'"}));
-    console.log(okvviki.preprocess({content: "[foo]: page"}));
-    console.log(okvviki.preprocess({content: "[foo]: page 'title'"}));
-    console.log(okvviki.preprocess({content: "[foo]: /page"}));
-    console.log(okvviki.preprocess({content: "[foo]: note/"}));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]:   note/page 'note/page'"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]:   note/page"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: http://example.com/google.com/android 'ahem'"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: page"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: page 'title'"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: /page"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: note/"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ?"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ? 'ahem'"})));
 
 
 }
