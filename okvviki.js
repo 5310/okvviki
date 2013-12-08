@@ -186,24 +186,24 @@ okvviki = {
     expand: function( page ) {
         var content = page.content;
         // Expand direct explicit random shorthands.
-        var regex = /\[[^\[\]]+\]\((\?)\s*("[^"]*")?\)/g;
-        content = content.replace( regex, function( match, group, char) {
+        var regex = /(\[[^\[\]]+\]\()(\?)(\s*(?:"[^"]*")?\))/g;
+        content = content.replace( regex, function( match, g1, g2, g3, index) {
             var key = okvviki.generateRandomKey();
-            match = match.replace( group, key );
+            match = g1+key+g3;
             return match;
         } );
         // Preprocess direct implicit random shorthands.
-        var regex = /\[(\?)\]\(\)/g;
-        content = content.replace( regex, function( match, group, char) {
+        var regex = /(\[)(\?)(\]\(\))/g;
+        content = content.replace( regex, function( match, g1, g2, g3, index) {
             var key = okvviki.generateRandomKey();
-            match = match.replace( group, key );
+            match = g1+key+g3;
             return match;
         } );
-        // Preprocess refeerntial shorthands.
-        var regex = /^\[[^\[\]]+\]:\s*(\?*)?\s*(["'\(].*["'\)])?$/gm;
-        content = content.replace( regex, function( match, group, char) {
+        // Preprocess referntial shorthands.
+        var regex = /(^\[[^\[\]]+\]:\s*)(\?)(\s*(?:["'\(].*["'\)])?$)/gm;
+        content = content.replace( regex, function( match, g1, g2, g3, index) {
             var key = okvviki.generateRandomKey();
-            match = match.replace( group, key );
+            match = g1+key+g3;
             return match;
         } );
         page.content = content;
@@ -223,21 +223,21 @@ okvviki = {
         var markdown = page.content;
         // Preprocess direct explicit shorthands.
         var regex = /\[[^\[\]]+\]\(([^\.\:\/\(\)\[\]\s"]+\/?[^\.\/\(\)\[\]\s"]*)\s*("[^"]*")?\)/g;
-        markdown = markdown.replace( regex, function( match, group, char) {
+        markdown = markdown.replace( regex, function( match, group, index) {
             var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
             match = match.replace( group, url );
             return match;
         } );
         // Preprocess direct implicit shorthands.
         var regex = /\[([^\.\:\/\(\)\[\]]+\/?[^\.\/\(\)\[\]]*)\]\(\)/g;
-        markdown = markdown.replace( regex, function( match, group, char) {
+        markdown = markdown.replace( regex, function( match, group, index) {
             var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
             match = match.replace( group, url );
             return match;
         } );
         // Preprocess refeerntial shorthands.
         var regex = /^\[[^\[\]]+\]:\s*([^\.\:\/\(\)\[\]\s"'\(\)]+\/?[^\.\/\(\)\[\]\s"'\(\)]*)?\s*(["'\(].*["'\)])?$/gm;
-        markdown = markdown.replace( regex, function( match, group, char) {
+        markdown = markdown.replace( regex, function( match, group, index) {
             var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
             match = match.replace( group, url );
             return match;
@@ -607,6 +607,8 @@ test = function() {
         -   Here're some random ones: [a](?) [b](? \"title\")\
         -   [google.com]() [note/page]() [page]() [/page]() [note/]() [some text]()\
     ";
+    //console.log(okvviki.expand(testpage));
+    //console.log(okvviki.expand({content: "[?]()"}));
     console.log(okvviki.preprocess(okvviki.expand(testpage)));
 
 
