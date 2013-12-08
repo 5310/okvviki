@@ -222,24 +222,24 @@ okvviki = {
     preprocess: function( page ) {
         var markdown = page.content;
         // Preprocess direct explicit shorthands.
-        var regex = /\[[^\[\]]+\]\(([^\.\:\/\(\)\[\]\s"]+\/?[^\.\/\(\)\[\]\s"]*)\s*("[^"]*")?\)/g;
-        markdown = markdown.replace( regex, function( match, group, index) {
-            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
-            match = match.replace( group, url );
+        var regex = /(\[[^\[\]]+\]\()([^\.\:\/\(\)\[\]\s"]+\/?[^\.\/\(\)\[\]\s"]*)(\s*(?:"[^"]*")?\))/g;
+        markdown = markdown.replace( regex, function( match, g1, g2, g3, index) {
+            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(g2));
+            match = g1+url+g3;
             return match;
         } );
         // Preprocess direct implicit shorthands.
-        var regex = /\[([^\.\:\/\(\)\[\]]+\/?[^\.\/\(\)\[\]]*)\]\(\)/g;
-        markdown = markdown.replace( regex, function( match, group, index) {
-            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
-            match = match.replace( group, url );
+        var regex = /(\[)([^\.\:\/\(\)\[\]]+\/?[^\.\/\(\)\[\]]*)(\]\()(\))/g;
+        markdown = markdown.replace( regex, function( match,  g1, g2, g3, g4, index) {
+            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(g2));
+            match = g1+g2+g3+url+g4;
             return match;
         } );
         // Preprocess refeerntial shorthands.
-        var regex = /^\[[^\[\]]+\]:\s*([^\.\:\/\(\)\[\]\s"'\(\)]+\/?[^\.\/\(\)\[\]\s"'\(\)]*)?\s*(["'\(].*["'\)])?$/gm;
-        markdown = markdown.replace( regex, function( match, group, index) {
-            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(group));
-            match = match.replace( group, url );
+        var regex = /^(\[[^\[\]]+\]:\s*)([^\.\:\/\(\)\[\]\s"'\(\)]+\/?[^\.\/\(\)\[\]\s"'\(\)]*)(\s*(?:["'\(].*["'\)])?)$/gm;
+        markdown = markdown.replace( regex, function( match, g1, g2, g3, index) {
+            var url = okvviki.generatePageURL(okvviki.parseKeysFromShorthand(g2));
+            match = g1+url+g3;
             return match;
         } );
         return markdown;
@@ -608,7 +608,7 @@ test = function() {
         -   [google.com]() [note/page]() [page]() [/page]() [note/]() [some text]()\
     ";
     //console.log(okvviki.expand(testpage));
-    //console.log(okvviki.expand({content: "[?]()"}));
+    //console.log(okvviki.preprocess(okvviki.expand({content: "[note/page]()"})));
     console.log(okvviki.preprocess(okvviki.expand(testpage)));
 
 
