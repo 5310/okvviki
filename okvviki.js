@@ -17,6 +17,7 @@ okvviki = {
         domain: 'http://127.0.0.1:4268/index.html',
         notebookKeyParam: 'n',
         pageKeyParam: 'p',
+        autosaveDelay: 1000,
     },
 
     /**
@@ -24,6 +25,7 @@ okvviki = {
      *
      * Sets handlers to intercept local okvviki links dynamically.
      * Sets handler to load page on history change.
+     * Sets the autosave function on edit field defocus or pause.
      * Sets the page load function on ready.
      */
     init: function() {
@@ -42,6 +44,24 @@ okvviki = {
             window.onpopstate = function( event ) {
                 okvviki.loadPage();
             };
+
+            $('#edit').on( 'blur', function( event ) {
+                okvviki.savePage();
+            } );
+
+            /** @see    http://stackoverflow.com/a/1909508 */
+            var resettingDelay = ( function() {
+              var timer = 0;
+              return function( callback, ms ) {
+                clearTimeout ( timer );
+                timer = setTimeout( callback, ms );
+              };
+            } )();
+            $('#edit').on( 'keyup', function( event ) {
+                resettingDelay(function(){
+                    okvviki.savePage();
+                }, okvviki.config.autosaveDelay );
+            } );
 
             okvviki.loadPage();
 
@@ -300,6 +320,7 @@ okvviki = {
             $('#display').html(html);
         }
         document.title = page.title;
+        $('#edit')[0].value = page.content;
         return html;
     },
 
@@ -325,9 +346,10 @@ okvviki = {
     /**
      * Saves the currently loaded okvviki page automatically.
      *
-     * Also expands and renders the current page, just in case.
+     * Commits the edited content text to the current page object, then expands and renders the current page, and then saves it.
      */
     savePage: function() {
+        okvviki.currentPage.content = $('#edit')[0].value;
         okvviki.expand(okvviki.currentPage);
         okvviki.renderPage(okvviki.currentPage);
         var keys = okvviki.parseKeysFromURL();

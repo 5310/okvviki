@@ -27,7 +27,7 @@
         - [x]    Add Marked.
         - [x]    Test with DOM.
     - [ ]   Page editing.
-        - [ ]   Basic content text editing.
+        - [x]   Basic content text editing.
         - [ ]   Toolbar tools.
     - [x]   Actual loading and saving.
         - [x]   Saving real pages.
