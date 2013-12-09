@@ -20,6 +20,17 @@ okvviki = {
     },
 
     /**
+     * Sets up all required callbacks, etc.
+     *
+     * Sets the page load function on ready.
+     */
+    init: function() {
+        $('body').ready( function() {
+            okvviki.loadPage();
+        } );
+    },
+
+    /**
      * The okvviki page object.
      *
      * Page objects are used to store okvviki pages as well as the special-case page known as the notebook which contains other pages.
@@ -271,17 +282,22 @@ okvviki = {
     },
 
     /**
-     * Loads the okvviki page automatically from the current url.
+     * Loads the okvviki page automatically from the current URL if valid.
      *
      * Retrieves the current URL's page object, and then renders it automatically.
      */
     loadPage: function() {
-        var keys = okvviki.parseKeysFromURL();
-        var callback = function( notebookKey, pageKey, page ) {
-            okvviki.currentPage = page;
-            okvviki.renderPage(page);
-        };
-        okvviki.retrievePage( callback, keys );
+        try {
+            var keys = okvviki.parseKeysFromURL();
+            var callback = function( notebookKey, pageKey, page ) {
+                okvviki.currentPage = page;
+                okvviki.renderPage(page);
+            };
+            okvviki.retrievePage( callback, keys );
+            return true;
+        } catch (error) {
+            return false;
+        }
     },
 
     /**
@@ -472,6 +488,7 @@ okvviki = {
     },
 
 };
+okvviki.init();
 
 
 

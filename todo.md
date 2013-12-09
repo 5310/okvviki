@@ -34,6 +34,7 @@
         - [ ]   Loading real pages.
             - [x]   Loading pages basically.
             - [ ]   Loading pages dynamically when domain is the same by intercepting links.
+            - [x]   Loading page automatically when a valid okvviki link is loaded.
 - [ ]   Interface
     - [ ]   Settle on and add frameworks, if any.
     - [ ]   Create templates.
