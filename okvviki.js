@@ -26,6 +26,16 @@ okvviki = {
      */
     init: function() {
         $('body').ready( function() {
+            $('#display').on( 'click', 'a', function( event ) {
+                var url = event.srcElement.href;
+                console.log(url);
+                try {
+                    var keys = okvviki.parseKeysFromURL(url);
+                    okvviki.openLink( keys );
+                    return false;
+                } catch (error) {
+                }
+            } );
             okvviki.loadPage();
         } );
     },
@@ -72,17 +82,20 @@ okvviki = {
      *
      * It parses the properties by the given names in config.
      *
-     * @returns     {Keys}       keys - Object containing parsed keys.
+     * @param       {String}    [url] - An url to parse. Defaults to current URL.
+     *
+     * @returns     {Keys}      keys - Object containing parsed keys.
      *
      * @throws      Throws an exception if there was no notebook key.
      */
-    parseKeysFromURL: function() {
+    parseKeysFromURL: function( url ) {
+        var url = url ? url : window.location.href;
         var keys = {
-            notebookKey: getParameterFromURL( okvviki.config.notebookKeyParam ),
-            pageKey: getParameterFromURL( okvviki.config.pageKeyParam )
+            notebookKey: getParameterFromURL( okvviki.config.notebookKeyParam, url ),
+            pageKey: getParameterFromURL( okvviki.config.pageKeyParam, url )
         };
         if ( keys.notebookKey == '' ) {
-            throw "No notebook key found. UNACCEPTABLE!"
+            throw "No notebook key found. UNACCEPTABLE!";
         }
         return keys;
     },
@@ -278,6 +291,7 @@ okvviki = {
         } else {
             $('#display').html(html);
         }
+        document.title = page.title;
         return html;
     },
 
@@ -394,6 +408,10 @@ okvviki = {
         remoteStorage.getItem( key, function( value, key ) {
             if ( callback ) {
                 var page = JSON.parse(value);
+                if ( page == null ) {
+                    page = new okvviki.Page();
+                    page.title = "Empty Page";
+                }
                 callback( notebookKey, pageKey, page );
             }
         } );
@@ -496,18 +514,20 @@ okvviki.init();
  * Returns the querystring value given a parameter name.
  *
  * @param       {String}    name - The querystring parameter being retrieved.
+ * @param       {String}    [url] - URL to parse. Defaults to currently loaded url.
  *
  * @returns      {String}    The value of the retrieved querystring parameter.
  */
-getParameterFromURL = function( name ) {
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp( regexS );
-  var results = regex.exec( window.location.href );
-  if( results == null )
-    return "";
-  else
-    return decodeURIComponent(results[1].replace(/\+/g, " "));
+getParameterFromURL = function( name, url ) {
+    var url = url ? url : window.location.href;
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( url );
+    if( results == null )
+        return "";
+    else
+        return decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
 /**

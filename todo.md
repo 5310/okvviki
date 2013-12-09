@@ -29,11 +29,11 @@
     - [ ]   Page editing.
         - [ ]   Basic content text editing.
         - [ ]   Toolbar tools.
-    - [ ]   Actual loading and saving.
+    - [x]   Actual loading and saving.
         - [x]   Saving real pages.
-        - [ ]   Loading real pages.
+        - [x]   Loading real pages.
             - [x]   Loading pages basically.
-            - [ ]   Loading pages dynamically when domain is the same by intercepting links.
+            - [x]   Loading pages dynamically when domain is the same by intercepting links.
             - [x]   Loading page automatically when a valid okvviki link is loaded.
 - [ ]   Interface
     - [ ]   Settle on and add frameworks, if any.
