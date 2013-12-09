@@ -43,6 +43,9 @@ okvviki = {
         this.notebookPages = [];
     },
 
+    /** Currently loaded page. */
+    currentPage: null,
+
     /**
      * The okvviki key object.
      *
@@ -248,6 +251,8 @@ okvviki = {
     /**
      * Preprocesses and finally renders a page.
      *
+     * TODO: Also set edit elements, toolbars, title, display state, scroll state, etc.
+     *
      * @param       {Page}      page - The page to be finally rendered to html.
      * @param       {Object}    [element] - The element to output the rendered markdown to. Defaults to the #display element.
      *
@@ -263,6 +268,62 @@ okvviki = {
             $('#display').html(html);
         }
         return html;
+    },
+
+    /**
+     * Loads the okvviki page automatically from the current url.
+     *
+     * Retrieves the current URL's page object, and then renders it automatically.
+     */
+    loadPage: function() {
+        var keys = okvviki.parseKeysFromURL();
+        var callback = function( notebookKey, pageKey, page ) {
+            okvviki.currentPage = page;
+            okvviki.renderPage(page);
+        };
+        okvviki.retrievePage( callback, keys );
+    },
+
+    /**
+     * Saves the currently loaded okvviki page automatically.
+     *
+     * Also expands and renders the current page, just in case.
+     */
+    savePage: function() {
+        okvviki.expand(okvviki.currentPage);
+        okvviki.renderPage(okvviki.currentPage);
+        var keys = okvviki.parseKeysFromURL();
+        okvviki.storePage( null, okvviki.currentPage, keys );
+    },
+
+    /**
+     * Deletes the currently loaded page.
+     *
+     * TODO: Ask for confirmation. Reset page to desired clean slate state.
+     */
+    deletePage: function() {
+        var keys = okvviki.parseKeysFromURL();
+        okvviki.retrievePage( null, keys );
+
+    },
+
+    /**
+     * Dynamically open the given okvviki key of the same domain.
+     *
+     * TODO: To be run in place of links to okvviki pages of the same domain.
+     */
+    openLink: function( pageKey, notebookKey ) {
+        if ( typeof pageKey != 'string' ) {
+            var notebookKey = pageKey.notebookKey;
+            var pageKey = pageKey.pageKey;
+        } else {
+            var notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
+            var pageKey = pageKey;
+        }
+        notebookKey = okvviki.makeValidKey( notebookKey );
+        pageKey = okvviki.makeValidKey( pageKey );
+        window.history.pushState( okvviki.currentPage, "loading", okvviki.generatePageURL( pageKey, notebookKey ) );
+        okvviki.loadPage();
     },
 
     /**
@@ -295,7 +356,7 @@ okvviki = {
      * @throws      Throws an exception if composite key is too short.
      * @throws      Throws an exception if composite key is too long.
      */
-    loadPage: function( callback, pageKey, notebookKey ) {
+    retrievePage: function( callback, pageKey, notebookKey ) {
 
         if ( typeof pageKey != 'string' ) {
             var notebookKey = pageKey.notebookKey;
@@ -316,7 +377,8 @@ okvviki = {
 
         remoteStorage.getItem( key, function( value, key ) {
             if ( callback ) {
-                callback( notebookKey, pageKey, value );
+                var page = JSON.parse(value);
+                callback( notebookKey, pageKey, page );
             }
         } );
 
@@ -334,7 +396,7 @@ okvviki = {
      * @throws      Throws an exception if composite key is too long.
      * @throws      Throws an exception if OKV failed to store the page object.
      */
-    savePage: function( callback, page, pageKey, notebookKey ) {
+    storePage: function( callback, page, pageKey, notebookKey ) {
 
         if ( typeof pageKey != 'string' ) {
             var notebookKey = pageKey.notebookKey;
@@ -353,7 +415,8 @@ okvviki = {
             throw "Key is too long. UNACCEPTABLE!!";
         }
 
-        remoteStorage.setItem( key, page, function( response ) {
+        var value = JSON.stringify(page);
+        remoteStorage.setItem( key, value, function( response ) {
             if ( response.status != 'multiset' ) {
                 throw "Failure to save the page object to OKV. UNACCEPTABLE!!"
             } else {
@@ -376,7 +439,7 @@ okvviki = {
      * @throws      Throws an exception if composite key is too long.
      * @throws      Throws an exception if OKV failed to delete the page object.
      */
-    deletePage: function( callback, pageKey, notebookKey ) {
+    destroyPage: function( callback, pageKey, notebookKey ) {
 
         if ( typeof pageKey != 'string' ) {
             var notebookKey = pageKey.notebookKey;
@@ -634,7 +697,11 @@ test = function() {
 
     testpage.title = "This is a test page.";
     testpage.content = "This is an [okvviki link]().";
-
-    okvviki.renderPage(testpage);
+    //okvviki.storePage( null, testpage, testpageKey, testnotebookKey );
+    okvviki.currentPage = testpage;
+    //window.history.pushState( testpage, testpage.title, okvviki.generatePageURL( testpageKey, testnotebookKey ) );
+    okvviki.openLink( testpageKey, testnotebookKey );
+    okvviki.savePage();
+    okvviki.loadPage();
 
 }

@@ -30,9 +30,9 @@
         - [ ]   Basic content text editing.
         - [ ]   Toolbar tools.
     - [ ]   Actual loading and saving.
-        - [ ]   Saving real pages.
+        - [x]   Saving real pages.
         - [ ]   Loading real pages.
-            - [ ]   Loading pages basically.
+            - [x]   Loading pages basically.
             - [ ]   Loading pages dynamically when domain is the same by intercepting links.
 - [ ]   Interface
     - [ ]   Settle on and add frameworks, if any.
