@@ -14,7 +14,7 @@ okvviki = {
      */
     config: {
         okvPrefix: '5310okvviki',
-        domain: '5310.github.io/okvviki/index.html',
+        domain: 'http://127.0.0.1:4268/index.html',
         notebookKeyParam: 'n',
         pageKeyParam: 'p',
     },
