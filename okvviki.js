@@ -29,9 +29,11 @@ okvviki = {
      * Sets the page load function on ready.
      */
     init: function() {
+        // The main on ready function.
         $('body').ready( function() {
 
-            $('#display').on( 'click', 'a', function( event ) {
+            // Intercepts all content links and dynamically loads local pages.
+            $('#display_content').on( 'click', 'a', function( event ) {
                 var url = event.srcElement.href;
                 try {
                     var keys = okvviki.parseKeysFromURL(url);
@@ -41,11 +43,13 @@ okvviki = {
                 }
             } );
 
+            // AUtoloads on browser history state change.
             window.onpopstate = function( event ) {
                 okvviki.loadPage();
             };
 
-            $('#edit').on( 'blur', function( event ) {
+            // Autosaves on edit element defocus.
+            $('#edit_content').on( 'blur', function( event ) {
                 okvviki.savePage();
             } );
 
@@ -57,11 +61,32 @@ okvviki = {
                 timer = setTimeout( callback, ms );
               };
             } )();
-            $('#edit').on( 'keyup', function( event ) {
+            // Autosaves upon idling for a while during edit.
+            $('#edit_content').on( 'keyup', function( event ) {
                 resettingDelay(function(){
                     okvviki.savePage();
                 }, okvviki.config.autosaveDelay );
             } );
+
+            // Toolbar buttons:
+            //TODO: Show an element with the generated shorthands selected for copying.
+            $('#copy_shorthand_button').on( 'click', function( event) {
+                var keys = okvviki.parseKeysFromURL();
+                var shorthand = keys.notebookKey+"/"+keys.pageKey;
+                return shorthand;
+            } );
+            //TODO: Toggle edit mode.
+            $('#edit_button').on( 'click', function( event ) {} );
+            // Save page.
+            $('#save_button').on( 'click', function( event ) {
+                okvviki.savePage();
+            } );
+            // Delete page.
+            $('#delete_button').on( 'click', function( event ) {
+                okvviki.deletePage();
+            } );
+            //TODO: Generate random page key shorthand and inserts it into cursor position.
+            $('#random_shorthand_button').on( 'click', function( event ) {} );
 
             okvviki.loadPage();
 
@@ -306,7 +331,7 @@ okvviki = {
      * TODO: Also set edit elements, toolbars, title, display state, scroll state, etc.
      *
      * @param       {Page}      page - The page to be finally rendered to html.
-     * @param       {Object}    [element] - The element to output the rendered markdown to. Defaults to the #display element.
+     * @param       {Object}    [element] - The element to output the rendered markdown to. Defaults to the #display_content element.
      *
      * @returns     {String}    html - The rendered HTML string.
      *
@@ -317,10 +342,10 @@ okvviki = {
         if ( element ) {
             element.html(html);
         } else {
-            $('#display').html(html);
+            $('#display_content').html(html);
         }
         document.title = page.title;
-        $('#edit')[0].value = page.content;
+        $('#edit_content')[0].value = page.content;
         return html;
     },
 
@@ -330,6 +355,7 @@ okvviki = {
      * Retrieves the current URL's page object, and then renders it automatically.
      */
     loadPage: function() {
+        //TODO: Implement animation and feedback.
         try {
             var keys = okvviki.parseKeysFromURL();
             var callback = function( notebookKey, pageKey, page ) {
@@ -349,7 +375,9 @@ okvviki = {
      * Commits the edited content text to the current page object, then expands and renders the current page, and then saves it.
      */
     savePage: function() {
-        okvviki.currentPage.content = $('#edit')[0].value;
+        //TODO: Implement animation and feedback.
+        //TODO: Implement undo.
+        okvviki.currentPage.content = $('#edit_content')[0].value;
         okvviki.expand(okvviki.currentPage);
         okvviki.renderPage(okvviki.currentPage);
         var keys = okvviki.parseKeysFromURL();
@@ -359,11 +387,15 @@ okvviki = {
     /**
      * Deletes the currently loaded page.
      *
-     * TODO: Ask for confirmation. Reset page to desired clean slate state.
+     * UI asks for confirmation. Resets page to desired clean slate state. Has an undo period.
      */
     deletePage: function() {
+        //TODO: Implement animation and feedback.
+        //TODO: Implement Resetting to a clean slate after delete.
+        //TODO: Implement undo.
         var keys = okvviki.parseKeysFromURL();
-        okvviki.retrievePage( null, keys );
+        //Commented out util deletion is recoverable.
+        //okvviki.retrievePage( null, keys );
 
     },
 

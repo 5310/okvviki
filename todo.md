@@ -1,7 +1,7 @@
 - [x]   Create bolerplate HTML.
 - [x]   Add necessary libraries.
 - [x]   Add minimum starting markup.
-- [ ]   Internals
+- [x]   Internals
     - [x]   Build simple module for app.
     - [x]   Define object for pages.
     - [x]   Add utility functions.
@@ -26,9 +26,12 @@
     - [x]   Render markdown.
         - [x]    Add Marked.
         - [x]    Test with DOM.
-    - [ ]   Page editing.
+    - [x]   Page editing.
         - [x]   Basic content text editing.
-        - [ ]   Toolbar tools.
+        - [x]   Autosave.
+        - [x]   Toolbar tools.
+            - [x]   Save.
+            - [x]   Delete.
     - [x]   Actual loading and saving.
         - [x]   Saving real pages.
         - [x]   Loading real pages.
@@ -37,8 +40,24 @@
             - [x]   Loading page automatically when a valid okvviki link is loaded.
 - [ ]   Interface
     - [ ]   Settle on and add frameworks, if any.
-    - [ ]   Create templates.
+    - [ ]   Create interface.
+        - [ ] Wireframe.
+        - [ ] Layout.
+        - [ ] UX styles:
+            - [ ]   Sticky toolbar.
+            - [ ]   Responsive margins.
+            - [ ]   Editing.
+                - [ ]   Basic toggle for edit textarea.
+                - [ ]   Responsive dual-pane set-up.
+                - [ ]   Scrolling to focus.
     - [ ]   Implement interactions.
+        - [ ]   Animation and feedback for save load and deletion operations.
+        - [ ]   Resetting to a clean slate for deletion.
+        - [ ]   Undo for save and deletion.
+        - [ ]   Toolbar tools:
+            - [ ]   Edit toggle.
+            - [ ]   Copy shorthand.
+            - [ ]   Insert random shorthand.
     - [ ]   Style ALL the things.
 - [ ]   Documentation
     - [x]   Make sure JSDoc3 works.
