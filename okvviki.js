@@ -22,21 +22,29 @@ okvviki = {
     /**
      * Sets up all required callbacks, etc.
      *
+     * Sets handlers to intercept local okvviki links dynamically.
+     * Sets handler to load page on history change.
      * Sets the page load function on ready.
      */
     init: function() {
         $('body').ready( function() {
+
             $('#display').on( 'click', 'a', function( event ) {
                 var url = event.srcElement.href;
-                console.log(url);
                 try {
                     var keys = okvviki.parseKeysFromURL(url);
                     okvviki.openLink( keys );
-                    return false;
+                    return event.preventDefault();
                 } catch (error) {
                 }
             } );
+
+            window.onpopstate = function( event ) {
+                okvviki.loadPage();
+            };
+
             okvviki.loadPage();
+
         } );
     },
 
@@ -340,7 +348,7 @@ okvviki = {
     /**
      * Dynamically open the given okvviki key of the same domain.
      *
-     * TODO: To be run in place of links to okvviki pages of the same domain.
+     * Simply changes history stack and lets the handler update the page.
      */
     openLink: function( pageKey, notebookKey ) {
         if ( typeof pageKey != 'string' ) {
@@ -352,8 +360,7 @@ okvviki = {
         }
         notebookKey = okvviki.makeValidKey( notebookKey );
         pageKey = okvviki.makeValidKey( pageKey );
-        window.history.pushState( okvviki.currentPage, "loading", okvviki.generatePageURL( pageKey, notebookKey ) );
-        okvviki.loadPage();
+        window.history.pushState( { pageKey: pageKey, notebookKey: notebookKey }, "loading", okvviki.generatePageURL( pageKey, notebookKey ) );
     },
 
     /**
@@ -732,13 +739,16 @@ test = function() {
     console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ?"})));
     console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ? 'ahem'"})));*/
 
-    testpage.title = "This is a test page.";
+    /*testpage.title = "This is a test page.";
     testpage.content = "This is an [okvviki link]().";
     //okvviki.storePage( null, testpage, testpageKey, testnotebookKey );
     okvviki.currentPage = testpage;
     //window.history.pushState( testpage, testpage.title, okvviki.generatePageURL( testpageKey, testnotebookKey ) );
     okvviki.openLink( testpageKey, testnotebookKey );
     okvviki.savePage();
-    okvviki.loadPage();
+    okvviki.loadPage();*/
+
+    okvviki.openLink( testpageKey, testnotebookKey );
+    window.onpopstate();
 
 }
