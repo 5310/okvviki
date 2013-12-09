@@ -246,15 +246,24 @@ okvviki = {
     },
 
     /**
-     * Renders a standard Markdown string to HTML.
+     * Preprocesses and finally renders a page.
      *
-     * @param       {String}    markdown - The standard Markdown string to be rendered to HTML.
+     * @param       {Page}      page - The page to be finally rendered to html.
+     * @param       {Object}    [element] - The element to output the rendered markdown to. Defaults to the #display element.
      *
      * @returns     {String}    html - The rendered HTML string.
      *
      * @throws      Throws an exception if rendering failed.
      */
-    render: function( markdown ) { return html; },
+    renderPage: function( page, element ) {
+        var html = marked(okvviki.preprocess(page));
+        if ( element ) {
+            element.html(html);
+        } else {
+            $('#display').html(html);
+        }
+        return html;
+    },
 
     /**
      * This callback format will be run after page object load save or delete requests.
@@ -314,7 +323,7 @@ okvviki = {
     },
 
     /**
-     * Saves an okvviki page object to OKV given the keys.
+     * Saves an okvviki page object to OKV given the keys. Also expands okvviki flavored Markdown shorthands.
      *
      * @param       {?pageIOCallback}    callback - The callback that receives the page object and keys after it's saved, for what it's worth.
      * @param       {Page}      page - The okvviki page object being stored.
@@ -596,7 +605,7 @@ test = function() {
     testnotebookKey = 'testnotebookKey';
     testpageKey = 'testpageKey';
 
-    testpage.title = "This is a test page.";
+    /*testpage.title = "This is a test page.";
     testpage.content = "\
         -   Here's another: [click this](google.com/android).\
         -   Here's one: [click this](note/page).\
@@ -621,7 +630,11 @@ test = function() {
     console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: /page"})));
     console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: note/"})));
     console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ?"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ? 'ahem'"})));
+    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ? 'ahem'"})));*/
 
+    testpage.title = "This is a test page.";
+    testpage.content = "This is an [okvviki link]().";
+
+    okvviki.renderPage(testpage);
 
 }

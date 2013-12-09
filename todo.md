@@ -23,12 +23,17 @@
         - [x]   Process direct implicit shorthands.
         - [x]   Accomodate titles!
         - [x]   Make substitutions work on index and not string replace which may break!
-    - [ ]   Render markdown.
+    - [x]   Render markdown.
         - [x]    Add Marked.
-        - [ ]    Test with DOM.
+        - [x]    Test with DOM.
     - [ ]   Page editing.
         - [ ]   Basic content text editing.
         - [ ]   Toolbar tools.
+    - [ ]   Actual loading and saving.
+        - [ ]   Saving real pages.
+        - [ ]   Loading real pages.
+            - [ ]   Loading pages basically.
+            - [ ]   Loading pages dynamically when domain is the same by intercepting links.
 - [ ]   Interface
     - [ ]   Settle on and add frameworks, if any.
     - [ ]   Create templates.
