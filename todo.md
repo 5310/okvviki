@@ -39,9 +39,9 @@
             - [x]   Loading pages dynamically when domain is the same by intercepting links.
             - [x]   Loading page automatically when a valid okvviki link is loaded.
 - [ ]   Interface
-    - [ ]   Settle on and add frameworks, if any.
+    - [x]   Settle on and add frameworks, if any.
     - [ ]   Create interface.
-        - [ ] Wireframe.
+        - [x] Wireframe.
         - [ ] Layout.
         - [ ] UX styles:
             - [ ]   Sticky toolbar.
