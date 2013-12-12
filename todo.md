@@ -42,22 +42,37 @@
     - [x]   Settle on and add frameworks, if any.
     - [ ]   Create interface.
         - [x] Wireframe.
-        - [ ] Layout.
-        - [ ] UX styles:
-            - [ ]   Sticky toolbar.
-            - [ ]   Responsive margins.
-            - [ ]   Editing.
-                - [ ]   Basic toggle for edit textarea.
-                - [ ]   Responsive dual-pane set-up.
-                - [ ]   Scrolling to focus.
+        - [x] Layout.
+            - [x]   Basic wide-device set-up.
+            - [x]   Responsive small-device set-up.
+            - [ ]   Responsive wide-device dual-pane set-up.
+        - [x] UX styles:
+            - [x]   Sticky toolbar.
+            - [x]   Basic editing toggle.
+            - [x]   Delete modal.
     - [ ]   Implement interactions.
-        - [ ]   Animation and feedback for save load and deletion operations.
-        - [ ]   Resetting to a clean slate for deletion.
+        - [x]   Animation and transitions.
+            - [x]   Page I/O progress.
+                -       BUG: Looping Semantic transition never stops.
+            - [x]   Mode toggle transitions.
+        - [x]   Resetting to a clean slate for deletion.
         - [ ]   Undo for save and deletion.
         - [ ]   Toolbar tools:
-            - [ ]   Edit toggle.
-            - [ ]   Copy shorthand.
-            - [ ]   Insert random shorthand.
+            - [x]   Edit toggle.
+            - [ ]   Random shortkey generator.
+        - [x]   Editing.
+            - [x]   Scrolling to focus: Free!
+            - [x]   Persistent cursor state: Free!
+        - [ ]   Navigation.
+            - [ ]   Landing page.
+                - [ ]   Minimal instructions.
+                - [ ]   Editable area.
+                - [ ]   Page creation tool.
+        - [ ]   De-notebookification.
+            - [ ]   Remove notebook key mandatoriness from url parsing.
+            - [ ]   Ignore all notebook keys while generating links.
+            - [ ]   Remove title notebook.
+            - [ ]   Remove all notebook key mentions altogether!
     - [ ]   Style ALL the things.
 - [ ]   Documentation
     - [x]   Make sure JSDoc3 works.
