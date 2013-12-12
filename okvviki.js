@@ -47,11 +47,6 @@ okvviki = {
             // Set text-area to auto-expand.
             $('textarea').autosize();
 
-            // If page is valid okvviki key, show the edit button for eventual loading.
-            if ( okvviki.parseKeysFromURL().notebookKey ) {
-                $('#toolbar_displaymode').transition('fade in');
-            }
-
             // Intercepts all content links and dynamically loads local pages.
             $('#display_content').on( 'click', 'a', function( event ) {
                 var url = event.srcElement.href;
@@ -195,8 +190,6 @@ okvviki = {
      * @param       {String}    [url] - An url to parse. Defaults to current URL.
      *
      * @returns     {Keys}      keys - Object containing parsed keys.
-     *
-     * @throws      Throws an exception if there was no notebook key.
      */
     parseKeysFromURL: function( url ) {
         var url = url ? url : window.location.href;
@@ -204,9 +197,11 @@ okvviki = {
             notebookKey: getParameterFromURL( okvviki.config.notebookKeyParam, url ),
             pageKey: getParameterFromURL( okvviki.config.pageKeyParam, url )
         };
+        /* Denotbookification.
         if ( keys.notebookKey == '' ) {
             throw "No notebook key found. UNACCEPTABLE!";
         }
+        */
         return keys;
     },
 
@@ -307,8 +302,11 @@ okvviki = {
             var notebookKey = okvviki.makeValidKey( pageKey.notebookKey );
             var pageKey = okvviki.makeValidKey( pageKey.pageKey );
         }
+        /* Denotebookification.
         notebookKey = notebookKey ? notebookKey : okvviki.parseKeysFromURL().notebookKey;
         var url = okvviki.config.domain+'?'+okvviki.config.notebookKeyParam+'='+notebookKey;
+        */
+        var url = okvviki.config.domain+'?'; // Denotebookification.
         url += pageKey != '' ? '&'+okvviki.config.pageKeyParam+'='+pageKey : '';
         return url;
     },
@@ -402,8 +400,10 @@ okvviki = {
             $('#display_content').html(html);
         }
         var keys = okvviki.parseKeysFromURL();
+        /* Denotebookification
         $('#notebookkey_shorthand').html(keys.notebookKey);
         $('#separator_shorthand').html("/");
+        */
         $('#pagekey_shorthand').html(keys.pageKey);
         document.title = page.title;
         $('#display_title').html(page.title);

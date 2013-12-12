@@ -57,9 +57,8 @@
             - [x]   Mode toggle transitions.
         - [x]   Resetting to a clean slate for deletion.
         - [ ]   Undo for save and deletion.
-        - [ ]   Toolbar tools:
+        - [x]   Toolbar tools:
             - [x]   Edit toggle.
-            - [ ]   Random shortkey generator.
         - [x]   Editing.
             - [x]   Scrolling to focus: Free!
             - [x]   Persistent cursor state: Free!
@@ -69,9 +68,9 @@
                 - [ ]   Editable area.
                 - [ ]   Page creation tool.
         - [ ]   De-notebookification.
-            - [ ]   Remove notebook key mandatoriness from url parsing.
-            - [ ]   Ignore all notebook keys while generating links.
-            - [ ]   Remove title notebook.
+            - [x]   Remove notebook key mandatoriness from url parsing.
+            - [x]   Ignore all notebook keys while generating links.
+            - [x]   Remove title notebook.
             - [ ]   Remove all notebook key mentions altogether!
     - [x]   Style ALL the things.
 - [ ]   Documentation
