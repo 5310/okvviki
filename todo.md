@@ -40,12 +40,12 @@
             - [x]   Loading page automatically when a valid okvviki link is loaded.
 - [ ]   Interface
     - [x]   Settle on and add frameworks, if any.
-    - [ ]   Create interface.
+    - [x]   Create interface.
         - [x] Wireframe.
         - [x] Layout.
             - [x]   Basic wide-device set-up.
             - [x]   Responsive small-device set-up.
-            - [ ]   Responsive wide-device dual-pane set-up.
+            - [ ]   Responsive wide-device dual-pane set-up?
         - [x] UX styles:
             - [x]   Sticky toolbar.
             - [x]   Basic editing toggle.
@@ -56,13 +56,14 @@
                 -       BUG: Looping Semantic transition never stops.
             - [x]   Mode toggle transitions.
         - [x]   Resetting to a clean slate for deletion.
-        - [ ]   Undo for save and deletion.
+        - [ ]   Undo for save and deletion?
         - [x]   Toolbar tools:
             - [x]   Edit toggle.
         - [x]   Editing.
             - [x]   Scrolling to focus: Free!
             - [x]   Persistent cursor state: Free!
         - [ ]   Navigation.
+            - [x]   Return to landing link for pages.
             - [ ]   Landing page.
                 - [ ]   Minimal instructions.
                 - [ ]   Editable area.
@@ -71,7 +72,7 @@
             - [x]   Remove notebook key mandatoriness from url parsing.
             - [x]   Ignore all notebook keys while generating links.
             - [x]   Remove title notebook.
-            - [ ]   Remove all notebook key mentions altogether!
+            - [ ]   Remove all notebook key mentions altogether?
     - [x]   Style ALL the things.
 - [ ]   Documentation
     - [x]   Make sure JSDoc3 works.

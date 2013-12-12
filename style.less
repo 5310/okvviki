@@ -31,6 +31,13 @@
     outline: none;
 }
 
+.noselect { /* Non standard! */
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
 
 
 html, body {
@@ -73,7 +80,7 @@ header {
             top: @mainpadding;
             left: @mainpadding;
             pointer-events: auto;
-            opacity: 0.25;
+            color: #999;
             font-size: 11px;
             font-weight: bold;
             width: 75%;
@@ -85,7 +92,19 @@ header {
                 top: 12px;
             }
             */
-            top: (@mainpadding + 5); // Denotebookification.
+            top: (@mainpadding - 2); // Denotebookification.
+            #pagekey_shorthand { // Denotebookification.
+                position: relative;
+                top: -4px;
+            }
+
+            #home_shorthand {
+                .noselect;
+                font-size: 2em;
+                cursor: pointer;
+                margin-left: -5px;
+                text-decoration: none;
+            }
 
         }
 

@@ -11,6 +11,13 @@
   background: #f6f6f6;
   outline: none;
 }
+.noselect {
+  /* Non standard! */
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
 html,
 body {
   height: 100%;
@@ -51,7 +58,7 @@ header #toolbar #toolbar_shorthand {
   top: 10px;
   left: 10px;
   pointer-events: auto;
-  opacity: 0.25;
+  color: #999;
   font-size: 11px;
   font-weight: bold;
   width: 75%;
@@ -62,7 +69,22 @@ header #toolbar #toolbar_shorthand {
                 top: 12px;
             }
             */
-  top: 15px;
+  top: 8px;
+}
+header #toolbar #toolbar_shorthand #pagekey_shorthand {
+  position: relative;
+  top: -4px;
+}
+header #toolbar #toolbar_shorthand #home_shorthand {
+  /* Non standard! */
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  font-size: 2em;
+  cursor: pointer;
+  margin-left: -5px;
+  text-decoration: none;
 }
 header #toolbar #toolbar_displaymode,
 header #toolbar #toolbar_editmode {
