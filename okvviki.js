@@ -14,10 +14,22 @@ okvviki = {
      */
     config: {
         okvPrefix: '5310okvviki',
-        domain: 'http://127.0.0.1:4268/index.html',
+        domain: 'file:///D:/Depot/Projects/okvviki/index.html',
         notebookKeyParam: 'n',
         pageKeyParam: 'p',
         autosaveDelay: 1000,
+    },
+
+    /**
+     * Stores the states for the app.
+     *
+     * @property    {Page}      currentPage - The currently loaded page, if any.
+     * @property    {Boolean}   editmode - True if edit mode is active.
+     */
+    states: {
+        currentPage: null,
+        currentPageUndo: null,
+        editmode: false,
     },
 
     /**
@@ -32,6 +44,14 @@ okvviki = {
         // The main on ready function.
         $('body').ready( function() {
 
+            // Set text-area to auto-expand.
+            $('textarea').autosize();
+
+            // If page is valid okvviki key, show the edit button for eventual loading.
+            if ( okvviki.parseKeysFromURL().notebookKey ) {
+                $('#toolbar_displaymode').transition('fade in');
+            }
+
             // Intercepts all content links and dynamically loads local pages.
             $('#display_content').on( 'click', 'a', function( event ) {
                 var url = event.srcElement.href;
@@ -43,16 +63,27 @@ okvviki = {
                 }
             } );
 
-            // AUtoloads on browser history state change.
+            // Autoloads on browser history state change.
             window.onpopstate = function( event ) {
                 okvviki.loadPage();
             };
 
-            // Autosaves on edit element defocus.
-            $('#edit_content').on( 'blur', function( event ) {
-                okvviki.savePage();
+            // Change focus to content on title edit enter.
+            $('#edit_title').on( 'keyup', function( event ) {
+                var code = event.which;
+                if ( code == 13 ) {
+                    $('#edit_content').focus();
+                }
             } );
 
+            // Autosaves on edit element defocus.
+            var defocusSave = function( event ) {
+                okvviki.savePage();
+            };
+            $('#edit_title').on( 'blur', defocusSave );
+            $('#edit_content').on( 'blur', defocusSave );
+
+            // Autosaves upon idling for a while during edit.
             /** @see    http://stackoverflow.com/a/1909508 */
             var resettingDelay = ( function() {
               var timer = 0;
@@ -61,32 +92,61 @@ okvviki = {
                 timer = setTimeout( callback, ms );
               };
             } )();
-            // Autosaves upon idling for a while during edit.
-            $('#edit_content').on( 'keyup', function( event ) {
+            var idleSave = function( event ) {
                 resettingDelay(function(){
                     okvviki.savePage();
                 }, okvviki.config.autosaveDelay );
+            };
+            $('#edit_title').on( 'keyup', idleSave);
+            $('#edit_content').on( 'keyup', idleSave);
+
+            // Shortcuts.
+            $(window).on( 'keydown', function( event ) {
+                if ( event.ctrlKey || event.metaKey ) {
+                    switch ( String.fromCharCode(event.which).toLowerCase() ) {
+                    case 's':
+                        if ( okvviki.states.currentPage ) {
+                            okvviki.savePage();
+                        }
+                        event.preventDefault();
+                        break;
+                    case 'e':
+                        if ( okvviki.states.currentPage ) {
+                            okvviki.setEditMode();
+                        }
+                        event.preventDefault();
+                        break;
+                    }
+                }
             } );
 
             // Toolbar buttons:
-            //TODO: Show an element with the generated shorthands selected for copying.
-            $('#copy_shorthand_button').on( 'click', function( event) {
-                var keys = okvviki.parseKeysFromURL();
-                var shorthand = keys.notebookKey+"/"+keys.pageKey;
-                return shorthand;
+            // Toggle edit mode.
+            $('#edit_button').on( 'click', function( event ) {
+                okvviki.setEditMode(true);
             } );
-            //TODO: Toggle edit mode.
-            $('#edit_button').on( 'click', function( event ) {} );
             // Save page.
             $('#save_button').on( 'click', function( event ) {
                 okvviki.savePage();
+                okvviki.setEditMode(false);
+
             } );
             // Delete page.
             $('#delete_button').on( 'click', function( event ) {
-                okvviki.deletePage();
+                $('#delete_modal')
+                    .modal('setting', {
+                        closable: false,
+                        onDeny: function () {
+                            okvviki.deletePage();
+                            okvviki.setEditMode(false);
+                        },
+                        onApprove: function () {
+                        }
+                    })
+                    .modal('show');
             } );
             //TODO: Generate random page key shorthand and inserts it into cursor position.
-            $('#random_shorthand_button').on( 'click', function( event ) {} );
+            /*$('#random_shorthand_button').on( 'click', function( event ) {} );*/
 
             okvviki.loadPage();
 
@@ -116,9 +176,6 @@ okvviki = {
         this.isNotebook = false;
         this.notebookPages = [];
     },
-
-    /** Currently loaded page. */
-    currentPage: null,
 
     /**
      * The okvviki key object.
@@ -344,8 +401,14 @@ okvviki = {
         } else {
             $('#display_content').html(html);
         }
+        var keys = okvviki.parseKeysFromURL();
+        $('#notebookkey_shorthand').html(keys.notebookKey);
+        $('#separator_shorthand').html("/");
+        $('#pagekey_shorthand').html(keys.pageKey);
         document.title = page.title;
-        $('#edit_content')[0].value = page.content;
+        $('#display_title').html(page.title);
+        $('#edit_title').val(page.title);
+        $('#edit_content').val(page.content).trigger('autosize.resize');
         return html;
     },
 
@@ -355,16 +418,38 @@ okvviki = {
      * Retrieves the current URL's page object, and then renders it automatically.
      */
     loadPage: function() {
-        //TODO: Implement animation and feedback.
         try {
             var keys = okvviki.parseKeysFromURL();
+            var download_status = $('#download_status')
+            download_status.transition('fade in', 500);
             var callback = function( notebookKey, pageKey, page ) {
-                okvviki.currentPage = page;
+                okvviki.states.currentPage = page;
+                if ( !page.content ) {
+                    okvviki.setEditMode(true);
+                }
                 okvviki.renderPage(page);
+                download_status.transition('fade out', 499);
             };
-            okvviki.retrievePage( callback, keys );
+            try {
+                okvviki.retrievePage( callback, keys );
+            } catch ( error ) {
+                download_status.transition( {
+                    animation: 'fade out',
+                    duration: '1ms',
+                    complete: function() {
+                        $('#error_status')
+                            .transition('fade in', 50)
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('fade out', 1000);
+                    }
+                } );
+                $('#separator_shorthand').html('loading failed');
+                //TODO: Retry load later.
+            }
             return true;
-        } catch (error) {
+        } catch ( error ) {
             return false;
         }
     },
@@ -375,13 +460,37 @@ okvviki = {
      * Commits the edited content text to the current page object, then expands and renders the current page, and then saves it.
      */
     savePage: function() {
-        //TODO: Implement animation and feedback.
-        //TODO: Implement undo.
-        okvviki.currentPage.content = $('#edit_content')[0].value;
-        okvviki.expand(okvviki.currentPage);
-        okvviki.renderPage(okvviki.currentPage);
-        var keys = okvviki.parseKeysFromURL();
-        okvviki.storePage( null, okvviki.currentPage, keys );
+        if ( okvviki.states.currentPage ) {
+            var title = $('#edit_title').val();
+            var keys = okvviki.parseKeysFromURL();
+            okvviki.states.currentPage.title = title ? title : "Untitled Page";
+            okvviki.states.currentPage.content = $('#edit_content').val();
+            okvviki.expand(okvviki.states.currentPage);
+            okvviki.renderPage(okvviki.states.currentPage);
+            okvviki.states.currentPageUndo = clone(okvviki.states.currentPage);
+            var upload_status = $('#upload_status')
+            upload_status.transition('fade in', 500);
+            var callback = function() {
+                upload_status.transition('fade out', 499);
+            };
+            try {
+                okvviki.storePage( callback, okvviki.states.currentPage, keys );
+            } catch ( error ) {
+                upload_status.transition( {
+                    animation: 'fade out',
+                    duration: '1ms',
+                    complete: function() {
+                        $('#error_status')
+                            .transition('fade in', 50)
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('fade out', 1000);
+                    }
+                } );
+                //TODO: Retry save later.
+            }
+        }
     },
 
     /**
@@ -390,13 +499,80 @@ okvviki = {
      * UI asks for confirmation. Resets page to desired clean slate state. Has an undo period.
      */
     deletePage: function() {
-        //TODO: Implement animation and feedback.
-        //TODO: Implement Resetting to a clean slate after delete.
-        //TODO: Implement undo.
-        var keys = okvviki.parseKeysFromURL();
-        //Commented out util deletion is recoverable.
-        //okvviki.retrievePage( null, keys );
+        if ( okvviki.states.currentPage ) {
+            var keys = okvviki.parseKeysFromURL();
+            okvviki.states.currentPageUndo = clone(okvviki.states.currentPage);
+            var remove_status = $('#remove_status')
+            remove_status.transition('fade in', 100);
+            var callback = function() {
+                okvviki.states.currentPage = null;
+                remove_status.transition( {
+                    animation: 'fade out',
+                    duration: '1000ms',
+                    complete: function() {
+                        //TODO: Return to notebook.
+                    }
+                } );
+            };
+            try {
+                //TODO: Faked until deletion is recoverable.
+                //okvviki.destroyPage( callback, keys );
+                callback();
+            } catch ( error ) {
+                remove_status.transition( {
+                    animation: 'fade out',
+                    duration: '1ms',
+                    complete: function() {
+                        $('#error_status')
+                            .transition('fade in', 50)
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('fade out', 1000);
+                    }
+                } );
+                //TODO: Retry deletion later.
+            }
+        }
+    },
 
+    /**
+     * Merely restores the undo current page object.
+     */
+    undoPage: function() {
+        okvviki.states.currentPage = clone(okvviki.states.currentPageUndo);
+    },
+
+    /**
+     * Sets edit mode. Toggles if not argued.
+     *
+     * @param       {Boolean}   [state] - Which state to set editmode to. Defaults to toggle.
+     */
+    setEditMode: function( state ) {
+        console.log(5231);
+        if ( state === undefined ) {
+            okvviki.states.editmode = !okvviki.states.editmode;
+        } else {
+            okvviki.states.editmode = state;
+        }
+        if ( okvviki.states.editmode ) {
+
+            $('#display').transition('fade out');
+            $('#edit').transition('fade in');
+            $('#edit_content').focus();
+
+            $('#toolbar_displaymode').transition('fade down out', 100);
+            $('#toolbar_editmode').transition('fade down in', 100);
+
+        } else {
+
+            $('#display').transition('fade in');
+            $('#edit').transition('fade out');
+
+            $('#toolbar_displaymode').transition('fade down in', 100);
+            $('#toolbar_editmode').transition('fade down out', 100);
+
+        }
     },
 
     /**
@@ -471,7 +647,6 @@ okvviki = {
                 var page = JSON.parse(value);
                 if ( page == null ) {
                     page = new okvviki.Page();
-                    page.title = "Empty Page";
                 }
                 callback( notebookKey, pageKey, page );
             }
@@ -793,14 +968,14 @@ test = function() {
     console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ?"})));
     console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ? 'ahem'"})));*/
 
-    /*testpage.title = "This is a test page.";
+    testpage.title = "This is a test page.";
     testpage.content = "This is an [okvviki link]().";
     //okvviki.storePage( null, testpage, testpageKey, testnotebookKey );
-    okvviki.currentPage = testpage;
+    okvviki.states.currentPage = testpage;
     //window.history.pushState( testpage, testpage.title, okvviki.generatePageURL( testpageKey, testnotebookKey ) );
     okvviki.openLink( testpageKey, testnotebookKey );
     okvviki.savePage();
-    okvviki.loadPage();*/
+    //okvviki.loadPage();
 
     okvviki.openLink( testpageKey, testnotebookKey );
     window.onpopstate();

@@ -12,8 +12,10 @@
 
     <script src="semantic/javascript/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.min.css" media="screen" />
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/autosize.js/1.17.1/autosize-min.js"></script>
 
     <script src="okvviki.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
 
 </head>
 
@@ -21,18 +23,55 @@
 
     <header>
         <div id='toolbar'>
-            <div id='copy_shorthand_button'>copy shorthand</div>
-            <div id='edit_button'>edit</div>
-            <div id='save_button'>save</div>
-            <div id='delete_button'>delete</div>
-            <div id='random_shorthand_button'>insert random shorthand</div>
+            <div id='toolbar_shorthand'>
+                <span id='notebookkey_shorthand'></span><span id='separator_shorthand'>loading...</span><span id='pagekey_shorthand'></span>
+            </div>
+            <div id='toolbar_displaymode' class="ui icon buttons mini transition hidden">
+                <a id='edit_button' class='ui icon button'><i class="edit icon"></i>Edit</a>
+            </div>
+            <div id='toolbar_editmode' class="ui icon buttons mini transition hidden">
+                <a id='delete_button' class='ui icon button negative'><i class="trash icon"></i></a>
+                <a id='random_shorthand_button' class='ui icon button'><i class="url icon"></i></a>
+                <a id='save_button' class='ui icon button positive'><i class="checkmark icon"></i>Done</a>
+            </div>
+            <div id='toolbar_status'  class="ui icon">
+                <div class="container">
+                    <i id='download_status' class="download icon ui transition hidden"></i>
+                    <i id='upload_status' class="upload icon ui transition hidden"></i>
+                    <i id='remove_status' class="remove circle icon ui transition hidden"></i>
+                    <i id='error_status' class="attention icon ui transition hidden"></i>
+                    <i id='check_status' class="ok sign icon ui transition hidden"></i>
+                </div>
+            </div>
         </div>
     </header>
 
     <main>
-        <div id='display_content'></div>
-        <textarea id='edit_content' name='edit_content' ></textarea>
+        <div id='display'>
+            <div id='display_title'></div>
+            <div id='display_content'></div>
+        </div>
+        <div id='edit' class="ui transition hidden">
+            <input id='edit_title' name='edit_title' type="text">
+            <textarea id='edit_content' name='edit_content'></textarea>
+        </div>
     </main>
+
+    <div id='delete_modal' class="ui modal small">
+        <i class="close icon"></i>
+        <div class="header">
+            Are you sure you want to delete this page?
+        </div>
+        <div class="content">
+            <div class="left">
+                Once deleted, it cannot be restored.
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui button negative">Delete</div>
+            <div class="ui button positive">Don't Delete</div>
+        </div>
+    </div>
 
 </body>
 
