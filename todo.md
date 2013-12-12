@@ -73,7 +73,7 @@
             - [ ]   Ignore all notebook keys while generating links.
             - [ ]   Remove title notebook.
             - [ ]   Remove all notebook key mentions altogether!
-    - [ ]   Style ALL the things.
+    - [x]   Style ALL the things.
 - [ ]   Documentation
     - [x]   Make sure JSDoc3 works.
     - [ ]   Update readme.

@@ -559,7 +559,7 @@ okvviki = {
 
             $('#display').transition('fade out');
             $('#edit').transition('fade in');
-            $('#edit_content').focus();
+            $('#edit_content').focus().trigger('autosize.resize');;
 
             $('#toolbar_displaymode').transition('fade down out', 100);
             $('#toolbar_editmode').transition('fade down in', 100);
