@@ -77,10 +77,10 @@
 - [x]   Make deplyable.
     - [x]   Make generated links relative to page.
     - [x]   For showcase, autogenerate landing page with random links everytime it's loaded.
-- [ ]   Documentation
+- [x]   Documentation
     - [x]   Make sure JSDoc3 works.
     - [x]   Add help section to app page.
-    - [ ]   Update readme.
-        - [ ]   Description of intent.
-        - [ ]   Brief okvviki flavored Markdown rundown.
-        - [ ]   Instructions to roll ones own.
+    - [x]   Update readme.
+        - [x]   Description of intent.
+        - [x]   Brief okvviki flavored Markdown rundown.
+        - [x]   Instructions to roll ones own.

@@ -27,6 +27,7 @@ okvviki = {
      * Stores the states for the app.
      *
      * @property    {Page}      currentPage - The currently loaded page, if any.
+     * @property    {Page}      currentPageUndo - The currently unsused backup page.
      * @property    {Boolean}   editmode - True if edit mode is active.
      */
     states: {
@@ -147,8 +148,8 @@ okvviki = {
                 $('#help_modal')
                     .modal('show');
             } );
-            //TODO: Generate random page key shorthand and inserts it into cursor position.
-            /*$('#random_shorthand_button').on( 'click', function( event ) {} );*/
+
+            okvviki.loadPage();
 
         } );
     },
@@ -441,7 +442,7 @@ okvviki = {
                         '\n'+
                         'Please note, okvviki is a simple toy app that uses [OpenKeyval][2] for storage, hence the name. [OpenKeyval][2] is a fine place for a tiny bit of experimental persistence, but it has no privacy or write-protection (while still being editable for our purposes) and absolutely no guarantees of retention. You should not use okvviki for any imporant data, that\'s just silly.\n'+
                         '\n'+
-                        'If you\'d still like to use it, you can just [download][3] and host a static copy of this page anywhere and use that.\n'+
+                        'If you\'d still like to use it, you can just [download][3] and host a static copy of this page anywhere and use that.  Just make sure to change the config to set demo mode to false.\n'+
                         '\n'+
                         '[1]: http://daringfireball.net/projects/markdown/syntax "Markdown Syntax Documentation"\n'+
                         '[2]: http://openkeyval.org/ "OpenKeyval, the Completely Open Key-value Data Store"\n'+
@@ -456,6 +457,9 @@ okvviki = {
                 }
                 okvviki.renderPage(page);
                 download_status.transition('fade out', 499);
+                if ( okvviki.config.demoMode && !keys.pageKey ) {
+                    okvviki.savePage();
+                }
             };
             try {
                 okvviki.retrievePage( callback, keys );
@@ -537,14 +541,12 @@ okvviki = {
                     animation: 'fade out',
                     duration: '1000ms',
                     complete: function() {
-                        //TODO: Return to notebook.
+                        history.back();
                     }
                 } );
             };
             try {
-                //TODO: Faked until deletion is recoverable.
-                //okvviki.destroyPage( callback, keys );
-                callback();
+                okvviki.destroyPage( callback, keys );
             } catch ( error ) {
                 remove_status.transition( {
                     animation: 'fade out',
@@ -561,20 +563,6 @@ okvviki = {
                 //TODO: Retry deletion later.
             }
         }
-    },
-
-    /**
-     * Merely restores the undo current page object.
-     */
-    undoPage: function() {
-        okvviki.states.currentPage = clone(okvviki.states.currentPageUndo);
-    },
-
-    /**
-     * Resets the page if demo mode is set.
-     */
-    demoMode: function() {
-        //TODO:
     },
 
     /**
@@ -765,7 +753,6 @@ okvviki = {
         }
 
         remoteStorage.deleteItem( key, function( response ) {
-            console.log(response);
             if ( response.status != 'multiset' ) {
                 throw "Failure to delete the page object from OKV. UNACCEPTABLE!!"
             } else {
@@ -967,53 +954,4 @@ getMatches = function( string, regex, index ) {
         matches.push(match[index]);
     }
     return matches;
-}
-
-
-
-test = function() {
-
-    testpage = new okvviki.Page();
-    testnotebookKey = 'testnotebookKey';
-    testpageKey = 'testpageKey';
-
-    /*testpage.title = "This is a test page.";
-    testpage.content = "\
-        -   Here's another: [click this](google.com/android).\
-        -   Here's one: [click this](note/page).\
-        -   Here's one: [click this](page).\
-        -   Here's one: [click this](/page).\
-        -   Here's one: [click this](note/).\
-        -   Here's one more: [click this](/okvviki)\
-        -   Here're some random ones: [a](?) [b](? \"title\")\
-        -   [google.com]() [note/page]() [page]() [/page]() [note/]() [some text]()\
-    ";
-    //console.log(okvviki.expand(testpage));
-    //console.log(okvviki.preprocess(okvviki.expand({content: "[note/page]()"})));
-    console.log(okvviki.preprocess(okvviki.expand(testpage)));
-
-
-    // Md referenes won't work without linebreaks, and Js strings cannot be line-broken, so the following examples are standalone.
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]:   note/page 'note/page'"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]:   note/page"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: http://example.com/google.com/android 'ahem'"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: page"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: page 'title'"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: /page"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: note/"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ?"})));
-    console.log(okvviki.preprocess(okvviki.expand({content: "[foo]: ? 'ahem'"})));*/
-
-    testpage.title = "This is a test page.";
-    testpage.content = "This is an [okvviki link]().";
-    //okvviki.storePage( null, testpage, testpageKey, testnotebookKey );
-    okvviki.states.currentPage = testpage;
-    //window.history.pushState( testpage, testpage.title, okvviki.generatePageURL( testpageKey, testnotebookKey ) );
-    okvviki.openLink( testpageKey, testnotebookKey );
-    okvviki.savePage();
-    //okvviki.loadPage();
-
-    okvviki.openLink( testpageKey, testnotebookKey );
-    window.onpopstate();
-
 }
