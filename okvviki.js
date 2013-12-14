@@ -8,16 +8,19 @@ okvviki = {
     /**
      * Properties that defines the okvviki app instance.
      *
-     * @property    {String}    domain - The domain this okvviki instance operate udner and will generate URL for.
+     * @property    {String}    domain - The domain this okvviki instance operate under and will generate URL for. Can be relative.
      * @property    {String}    notebookKeyParam - The parameter name denoting notebook keys in this okvviki instance.
      * @property    {String}    pageKeyParam - The parameter name denoting page keys in this okvviki instance.
+     * @property    {Number}    autosaveDelay - The idle-time before autosave after user stops typing.
+     * @property    {Boolean}   demoMode - If true, the index page will be reset every time the app loads.
      */
     config: {
         okvPrefix: '5310okvviki',
-        domain: 'file:///D:/Depot/Projects/okvviki/index.html',
+        domain: 'index.html',
         notebookKeyParam: 'n',
         pageKeyParam: 'p',
         autosaveDelay: 1000,
+        demoMode: true,
     },
 
     /**
@@ -60,7 +63,6 @@ okvviki = {
 
             // Autoloads on browser history state change.
             window.onpopstate = function( event ) {
-                console.log(52122);
                 okvviki.loadPage();
             };
 
@@ -426,6 +428,11 @@ okvviki = {
             var download_status = $('#download_status');
             download_status.transition('fade in', 500);
             var callback = function( notebookKey, pageKey, page ) {
+                // Reset index if set to demo mode.
+                if ( okvviki.config.demoMode && !keys.pageKey ) {
+                    page.title = "okvviki, the toy-wiki using Markdown and OpenKeyval";
+                    page.content = "Edit any page to create any okvviki shorthand link (click the help button above) like [_this_]("+okvviki.generateRandomKey(16)+").\n\nFollow any link to view or edit it.\n\nThis index page is usually used to list links to other hub pages, but since this is a demo, it'll be reset everytime it's loaded.\n\nIf you want your own okvviki for some reason, just follow the readme on the [Github repo](https://github.com/5310/okvviki).";
+                }
                 okvviki.states.currentPage = page;
                 if ( !page.content ) {
                     okvviki.setEditMode(true);
@@ -452,11 +459,6 @@ okvviki = {
                 } );
                 $('#separator_shorthand').html('loading failed');
                 //TODO: Retry load later.
-            }
-            if ( !keys.pageKey ) {
-                okvviki.renderHome(true);
-            } else {
-                okvviki.renderHome(false);
             }
             return true;
         } catch ( error ) {
@@ -554,9 +556,9 @@ okvviki = {
     },
 
     /**
-     * Draws the extra tools for the homepage.
+     * Resets the page if demo mode is set.
      */
-    renderHome: function() {
+    demoMode: function() {
         //TODO:
     },
 
@@ -576,6 +578,9 @@ okvviki = {
             if ( $('#display').transition('is visible') ) $('#display').transition('fade out');
             if ( !$('#edit').transition('is visible') ) $('#edit').transition('fade in');
             $('#edit_content').focus().trigger('autosize.resize');
+            var content = $('#edit_content').val();
+            $('#edit_content').val('');
+            $('#edit_content').val(content);
 
             if ( $('#toolbar_displaymode').transition('is visible') ) $('#toolbar_displaymode').transition('fade down out', 100);
             if ( !$('#toolbar_editmode').transition('is visible') ) $('#toolbar_editmode').transition('fade down in', 100);

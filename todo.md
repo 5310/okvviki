@@ -62,6 +62,7 @@
         - [x]   Editing.
             - [x]   Scrolling to focus: Free!
             - [x]   Persistent cursor state: Free!
+            - [x]   Cursor at end.
         - [x]   Navigation.
             - [x]   Return to landing link for pages.
             - [x]   Landing page.
@@ -73,9 +74,9 @@
             - [x]   Remove title notebook.
             - [ ]   Remove all notebook key mentions altogether?
     - [x]   Style ALL the things.
-- [ ]   Make deplyable.
-    - [ ]   Make generated links relative to page.
-    - [ ]   For showcase, autogenerate landing page with random links everytime it's loaded.
+- [x]   Make deplyable.
+    - [x]   Make generated links relative to page.
+    - [x]   For showcase, autogenerate landing page with random links everytime it's loaded.
 - [ ]   Documentation
     - [x]   Make sure JSDoc3 works.
     - [x]   Add help section to app page.
