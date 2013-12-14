@@ -419,41 +419,42 @@ okvviki = {
     loadPage: function() {
         try {
             var keys = okvviki.parseKeysFromURL();
-            if ( !keys.pageKey ) {
-                return false;
-            } else {
-                var download_status = $('#download_status');
-                download_status.transition('fade in', 500);
-                var callback = function( notebookKey, pageKey, page ) {
-                    okvviki.states.currentPage = page;
-                    if ( !page.content ) {
-                        okvviki.setEditMode(true);
-                    } else {
-                        okvviki.setEditMode(false);
-                    }
-                    okvviki.renderPage(page);
-                    download_status.transition('fade out', 499);
-                };
-                try {
-                    okvviki.retrievePage( callback, keys );
-                } catch ( error ) {
-                    download_status.transition( {
-                        animation: 'fade out',
-                        duration: '1ms',
-                        complete: function() {
-                            $('#error_status')
-                                .transition('fade in', 50)
-                                .transition('pulse')
-                                .transition('pulse')
-                                .transition('pulse')
-                                .transition('fade out', 1000);
-                        }
-                    } );
-                    $('#separator_shorthand').html('loading failed');
-                    //TODO: Retry load later.
+            var download_status = $('#download_status');
+            download_status.transition('fade in', 500);
+            var callback = function( notebookKey, pageKey, page ) {
+                okvviki.states.currentPage = page;
+                if ( !page.content ) {
+                    okvviki.setEditMode(true);
+                } else {
+                    okvviki.setEditMode(false);
                 }
-                return true;
+                okvviki.renderPage(page);
+                download_status.transition('fade out', 499);
+            };
+            try {
+                okvviki.retrievePage( callback, keys );
+            } catch ( error ) {
+                download_status.transition( {
+                    animation: 'fade out',
+                    duration: '1ms',
+                    complete: function() {
+                        $('#error_status')
+                            .transition('fade in', 50)
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('pulse')
+                            .transition('fade out', 1000);
+                    }
+                } );
+                $('#separator_shorthand').html('loading failed');
+                //TODO: Retry load later.
             }
+            if ( !keys.pageKey ) {
+                okvviki.renderHome(true);
+            } else {
+                okvviki.renderHome(false);
+            }
+            return true;
         } catch ( error ) {
             return false;
         }
@@ -546,6 +547,13 @@ okvviki = {
      */
     undoPage: function() {
         okvviki.states.currentPage = clone(okvviki.states.currentPageUndo);
+    },
+
+    /**
+     * Draws the extra tools for the homepage.
+     */
+    renderHome: function() {
+        //TODO:
     },
 
     /**
