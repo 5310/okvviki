@@ -27,9 +27,11 @@
                 <a id='home_shorthand' href="index.html"><i class="home icon"></i></a><!--<span id='notebookkey_shorthand'></span><span id='separator_shorthand'>loading...</span>--><span id='pagekey_shorthand'>loading...</span>
             </div>
             <div id='toolbar_displaymode' class="ui icon buttons mini transition hidden">
+                <a id='help_button_display' class='help_button ui icon button'><i class="question icon"></i></a>
                 <a id='edit_button' class='ui icon button'><i class="edit icon"></i>Edit</a>
             </div>
             <div id='toolbar_editmode' class="ui icon buttons mini transition hidden">
+                <a id='help_button_edit' class='help_button ui icon button'><i class="question icon"></i></a>
                 <a id='delete_button' class='ui icon button negative'><i class="trash icon"></i></a>
                 <!-- <a id='random_shorthand_button' class='ui icon button'><i class="url icon"></i></a> -->
                 <div class="or"></div>
@@ -71,6 +73,43 @@
         <div class="actions">
             <div class="ui button negative">Delete</div>
             <div class="ui button positive">Don't Delete</div>
+        </div>
+    </div>
+
+    <div id='help_modal' class="ui modal small">
+        <i class="close icon"></i>
+        <div class="header">
+            What is okvviki?
+        </div>
+        <div class="content">
+            <div class="left">
+                <p>okvviki is a toy wiki that uses slightly flavored Markdown for wiki-like formatting and linking and OpenKeyval for "storage".</p>
+                <p>Find out more about this project and its source on <a href="https://github.com/5310/okvviki">Github</a>.</p>
+                <p class="ui red primary inverted segment">Even this particular instance of okvviki and all the pages herein can be edited anonymously and by anyone at all, I take no responsibilities for the content that appears here. >:D</p>
+                <p class="ui red secondary inverted segment">Please note, okvviki is a simple toy app that uses OpenKeyval for storage, hence the name. OpenKeyval is a fine place for a tiny bit of experimental persistence, but it has no privacy or write-protection (while still being editable for our purposes) and absolutely no guarantees of retention. You <strong>should not</strong> use okvviki for any imporant data, that's just silly.</p>
+                <p class="ui red tertiary inverted segment">If you'd still like to use it, you can just host a static copy of this page anywhere and use that.</p>
+                <div class="ui secondary segment"><p>okvviki uses Markdown for its pages...mostly.</p>
+                    <p>If you're unfamiliar with Markdown visit the <a href="http://daringfireball.net/projects/markdown/syntax">syntax documentation</a>.</p>
+                    <p>In addition to standard Markdown, okvviki adds a few things to make wiki-style links easier:</p>
+                    <ul>
+                        <li>
+                            <p>If you give any Markdown link a target that isn't an url or a relative url that starts with a <code>/</code>, okvviki will assume it is a page's key, and convert it to a proper url pointing to that page.</p>
+                            <p><code>[link text](link page)</code> <br/> <em>is converted to</em> <br/> <code>&lt;a href=".../index.html?p=link_page"&gt;link text&lt;/a&gt</code>.</p>
+                        </li>
+                        <li>
+                            <p>Leaving a Markdown link empty of a target will automatically use the link-text as a page key, if the conversion is possible.</p>
+                            <p><code>[link text]()</code> <br/> <em>is converted to</em> <br/> <code>&lt;a href=".../index.html?p=link_text"&gt;link text&lt;/a&gt</code>.</p>
+                        </li>
+                        <li>
+                            <p>Instead of an url, inputting a <code>?</code> will instead create a randomly generated page key upon save.</p>
+                            <p><code>[link text](?)</code> <br/> <em>is converted to</em> <br/> <code>&lt;a href=".../index.html?p=123abc"&gt;link text&lt;/a&gt</code>.</p>
+                        </li>
+                        <li>
+                            <p>And all of this is valid for refential link targets, too!</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 

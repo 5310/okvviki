@@ -107,6 +107,21 @@ header #toolbar #toolbar_displaymode .or:after,
 header #toolbar #toolbar_editmode .or:after {
   border-color: #f6f6f6;
 }
+header #toolbar #toolbar_displaymode .help_button,
+header #toolbar #toolbar_editmode .help_button {
+  border-radius: inherit;
+  margin-right: 8px;
+}
+header #toolbar #toolbar_displaymode #edit_button,
+header #toolbar #toolbar_editmode #edit_button {
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+header #toolbar #toolbar_displaymode #delete_button,
+header #toolbar #toolbar_editmode #delete_button {
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
 header #toolbar #toolbar_status {
   width: 25px;
   height: 20px;
@@ -171,4 +186,8 @@ main #edit #edit_content {
 }
 #delete_modal .close.icon {
   display: none;
+}
+#help_modal {
+  height: 80%;
+  overflow-y: auto;
 }

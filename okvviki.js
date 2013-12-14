@@ -141,6 +141,10 @@ okvviki = {
                     })
                     .modal('show');
             } );
+            $('.help_button').on( 'click', function( event ) {
+                $('#help_modal')
+                    .modal('show');
+            } );
             //TODO: Generate random page key shorthand and inserts it into cursor position.
             /*$('#random_shorthand_button').on( 'click', function( event ) {} );*/
 

@@ -60,6 +60,10 @@ a {
     }
 }
 
+code {
+
+}
+
 
 header {
 
@@ -126,6 +130,18 @@ header {
                 &:after {
                     border-color: @background-color;
                 }
+            }
+            .help_button {
+                border-radius: inherit;
+                margin-right: 8px;
+            }
+            #edit_button {
+                border-top-left-radius: inherit;
+                border-bottom-left-radius: inherit;
+            }
+            #delete_button {
+                border-top-left-radius: inherit;
+                border-bottom-left-radius: inherit;
             }
         }
 
@@ -208,4 +224,9 @@ main {
     .close.icon {
         display: none;
     }
+}
+
+#help_modal {
+    height: 80%;
+    overflow-y: auto;
 }
