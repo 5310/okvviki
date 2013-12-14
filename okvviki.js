@@ -60,6 +60,7 @@ okvviki = {
 
             // Autoloads on browser history state change.
             window.onpopstate = function( event ) {
+                console.log(52122);
                 okvviki.loadPage();
             };
 
@@ -142,8 +143,6 @@ okvviki = {
             } );
             //TODO: Generate random page key shorthand and inserts it into cursor position.
             /*$('#random_shorthand_button').on( 'click', function( event ) {} );*/
-
-            okvviki.loadPage();
 
         } );
     },
@@ -420,35 +419,41 @@ okvviki = {
     loadPage: function() {
         try {
             var keys = okvviki.parseKeysFromURL();
-            var download_status = $('#download_status')
-            download_status.transition('fade in', 500);
-            var callback = function( notebookKey, pageKey, page ) {
-                okvviki.states.currentPage = page;
-                if ( !page.content ) {
-                    okvviki.setEditMode(true);
-                }
-                okvviki.renderPage(page);
-                download_status.transition('fade out', 499);
-            };
-            try {
-                okvviki.retrievePage( callback, keys );
-            } catch ( error ) {
-                download_status.transition( {
-                    animation: 'fade out',
-                    duration: '1ms',
-                    complete: function() {
-                        $('#error_status')
-                            .transition('fade in', 50)
-                            .transition('pulse')
-                            .transition('pulse')
-                            .transition('pulse')
-                            .transition('fade out', 1000);
+            if ( !keys.pageKey ) {
+                return false;
+            } else {
+                var download_status = $('#download_status');
+                download_status.transition('fade in', 500);
+                var callback = function( notebookKey, pageKey, page ) {
+                    okvviki.states.currentPage = page;
+                    if ( !page.content ) {
+                        okvviki.setEditMode(true);
+                    } else {
+                        okvviki.setEditMode(false);
                     }
-                } );
-                $('#separator_shorthand').html('loading failed');
-                //TODO: Retry load later.
+                    okvviki.renderPage(page);
+                    download_status.transition('fade out', 499);
+                };
+                try {
+                    okvviki.retrievePage( callback, keys );
+                } catch ( error ) {
+                    download_status.transition( {
+                        animation: 'fade out',
+                        duration: '1ms',
+                        complete: function() {
+                            $('#error_status')
+                                .transition('fade in', 50)
+                                .transition('pulse')
+                                .transition('pulse')
+                                .transition('pulse')
+                                .transition('fade out', 1000);
+                        }
+                    } );
+                    $('#separator_shorthand').html('loading failed');
+                    //TODO: Retry load later.
+                }
+                return true;
             }
-            return true;
         } catch ( error ) {
             return false;
         }
@@ -549,7 +554,6 @@ okvviki = {
      * @param       {Boolean}   [state] - Which state to set editmode to. Defaults to toggle.
      */
     setEditMode: function( state ) {
-        console.log(5231);
         if ( state === undefined ) {
             okvviki.states.editmode = !okvviki.states.editmode;
         } else {
@@ -557,20 +561,20 @@ okvviki = {
         }
         if ( okvviki.states.editmode ) {
 
-            $('#display').transition('fade out');
-            $('#edit').transition('fade in');
-            $('#edit_content').focus().trigger('autosize.resize');;
+            if ( $('#display').transition('is visible') ) $('#display').transition('fade out');
+            if ( !$('#edit').transition('is visible') ) $('#edit').transition('fade in');
+            $('#edit_content').focus().trigger('autosize.resize');
 
-            $('#toolbar_displaymode').transition('fade down out', 100);
-            $('#toolbar_editmode').transition('fade down in', 100);
+            if ( $('#toolbar_displaymode').transition('is visible') ) $('#toolbar_displaymode').transition('fade down out', 100);
+            if ( !$('#toolbar_editmode').transition('is visible') ) $('#toolbar_editmode').transition('fade down in', 100);
 
         } else {
 
-            $('#display').transition('fade in');
-            $('#edit').transition('fade out');
+            if ( !$('#display').transition('is visible') ) $('#display').transition('fade in');
+            if ( $('#edit').transition('is visible') ) $('#edit').transition('fade out');
 
-            $('#toolbar_displaymode').transition('fade down in', 100);
-            $('#toolbar_editmode').transition('fade down out', 100);
+            if ( !$('#toolbar_displaymode').transition('is visible') ) $('#toolbar_displaymode').transition('fade down in', 100);
+            if ( $('#toolbar_editmode').transition('is visible') ) $('#toolbar_editmode').transition('fade down out', 100);
 
         }
     },
