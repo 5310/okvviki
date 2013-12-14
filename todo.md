@@ -38,7 +38,7 @@
             - [x]   Loading pages basically.
             - [x]   Loading pages dynamically when domain is the same by intercepting links.
             - [x]   Loading page automatically when a valid okvviki link is loaded.
-- [ ]   Interface
+- [x]   Interface
     - [x]   Settle on and add frameworks, if any.
     - [x]   Create interface.
         - [x] Wireframe.
@@ -50,7 +50,7 @@
             - [x]   Sticky toolbar.
             - [x]   Basic editing toggle.
             - [x]   Delete modal.
-    - [ ]   Implement interactions.
+    - [x]   Implement interactions.
         - [x]   Animation and transitions.
             - [x]   Page I/O progress.
                 -       BUG: Looping Semantic transition never stops.
@@ -62,19 +62,24 @@
         - [x]   Editing.
             - [x]   Scrolling to focus: Free!
             - [x]   Persistent cursor state: Free!
-        - [ ]   Navigation.
+        - [x]   Navigation.
             - [x]   Return to landing link for pages.
-            - [ ]   Landing page.
-                - [ ]   Minimal instructions.
-                - [ ]   Editable area.
-                - [ ]   Page creation tool.
-        - [ ]   De-notebookification.
+            - [x]   Landing page.
+                - [x]   Minimal instructions.
+                - [x]   Editable area.
+        - [x]   De-notebookification.
             - [x]   Remove notebook key mandatoriness from url parsing.
             - [x]   Ignore all notebook keys while generating links.
             - [x]   Remove title notebook.
             - [ ]   Remove all notebook key mentions altogether?
     - [x]   Style ALL the things.
+- [ ]   Make deplyable.
+    - [ ]   Make generated links relative to page.
+    - [ ]   For showcase, autogenerate landing page with random links everytime it's loaded.
 - [ ]   Documentation
     - [x]   Make sure JSDoc3 works.
+    - [x]   Add help section to app page.
     - [ ]   Update readme.
-    - [ ]   Add about section to app page.
+        - [ ]   Description of intent.
+        - [ ]   Brief okvviki flavored Markdown rundown.
+        - [ ]   Instructions to roll ones own.
