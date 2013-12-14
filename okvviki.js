@@ -430,8 +430,23 @@ okvviki = {
             var callback = function( notebookKey, pageKey, page ) {
                 // Reset index if set to demo mode.
                 if ( okvviki.config.demoMode && !keys.pageKey ) {
-                    page.title = "okvviki, the toy-wiki using Markdown and OpenKeyval";
-                    page.content = "Edit any page to create any okvviki shorthand link (click the help button above) like [_this_]("+okvviki.generateRandomKey(16)+").\n\nFollow any link to view or edit it.\n\nThis index page is usually used to list links to other hub pages, but since this is a demo, it'll be reset everytime it's loaded.\n\nIf you want your own okvviki for some reason, just follow the readme on the [Github repo](https://github.com/5310/okvviki).";
+                    page.title = "okvviki";
+                    page.content =
+                        '# **okvviki** is a toy wiki that uses slightly flavored [Markdown][1] for wiki-like formatting and linking and [OpenKeyval][2] for "storage".\n'+
+                        '**Just edit any page to create any links using okvviki shorthands (click the help button above) to visit and/or edit [that page]('+okvviki.generateRandomKey(16)+'). Link between pages all wiki-like, you know the drill.**\n'+
+                        '\n'+
+                        'Find out more about this project and its source on [Github][3].\n'+
+                        '\n'+
+                        'Even _this_ particular instance of okvviki and all the pages herein can be edited anonymously and by anyone at all, and I take no responsibilities for any of the content that appears here! Being a demo, this index page which will usually be used to link to other hub pages, will be reset upon reload though. >:D\n'+
+                        '\n'+
+                        'Please note, okvviki is a simple toy app that uses [OpenKeyval][2] for storage, hence the name. [OpenKeyval][2] is a fine place for a tiny bit of experimental persistence, but it has no privacy or write-protection (while still being editable for our purposes) and absolutely no guarantees of retention. You should not use okvviki for any imporant data, that\'s just silly.\n'+
+                        '\n'+
+                        'If you\'d still like to use it, you can just [download][3] and host a static copy of this page anywhere and use that.\n'+
+                        '\n'+
+                        '[1]: http://daringfireball.net/projects/markdown/syntax "Markdown Syntax Documentation"\n'+
+                        '[2]: http://openkeyval.org/ "OpenKeyval, the Completely Open Key-value Data Store"\n'+
+                        '[3]: https://github.com/5310/okvviki "okvviki Github Repository"\n'
+                        ;
                 }
                 okvviki.states.currentPage = page;
                 if ( !page.content ) {
